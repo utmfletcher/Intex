@@ -1,7 +1,7 @@
 using Intex.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Intex.Areas.Identity.Data;
+
 
 namespace Intex
 {
