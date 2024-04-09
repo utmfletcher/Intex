@@ -1,6 +1,7 @@
-using Intex.Data;
+using Azure.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Intex.Data;
 
 
 namespace Intex
@@ -10,6 +11,8 @@ namespace Intex
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+           
 
             // Add services to the container.
             var connectionString = builder.Configuration.GetConnectionString("PostgresConnection") ?? throw new InvalidOperationException("Connection string 'PostgresConnection' not found.");
@@ -24,8 +27,9 @@ namespace Intex
             // Configure Google authentication
             builder.Services.AddAuthentication().AddGoogle(googleOptions =>
             {
-                googleOptions.ClientId = builder.Configuration["Authentication:Google:ClientId"];
-                googleOptions.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+                // Fetch credentials from Azure Key Vault via configuration
+                googleOptions.ClientId = "802684679880-e90ndc7k624qf0lhdbml64drnqhj5csf.apps.googleusercontent.com";
+                googleOptions.ClientSecret = "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";
             });
 
             var app = builder.Build();
