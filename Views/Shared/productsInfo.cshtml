@@ -1,0 +1,21 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model Intex.Models.Product
+
+<div class="card">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+            <span class="text-muted" style="font-size: small;">Year: @Model.Year</span>
+            <span class="badge rounded-pill bg-info">Price: $@Model.Price</span>
+        </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">Number of Parts: @Model.NumParts</li>
+            <li class="list-group-item">Image Link: @Model.ImgLink</li>
+            <li class="list-group-item">Primary Color: @Model.PrimaryColor</li>
+            <li class="list-group-item">Secondary Color: @Model.SecondaryColor</li>
+        </ul>
+    </div>
+</div>

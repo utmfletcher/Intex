@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Intex.Models;
 
@@ -33,7 +34,7 @@ public partial class PostgresContext : DbContext
 
     public virtual DbSet<Order> Orders { get; set; }
 
-    public virtual DbSet<Product> Products { get; set; }
+    public virtual DbSet<Product> Products { get; set; } = null!;
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseNpgsql("Name=ConnectionStrings:PostgresConnection");
@@ -164,10 +165,19 @@ public partial class PostgresContext : DbContext
 
         modelBuilder.Entity<Product>(entity =>
         {
-            entity
+            /*entity
                 .HasNoKey()
-                .ToTable("products");
+                .ToTable("products");*/
+            // Configure the primary key
+            // Configure the primary key
+            entity.HasKey(e => e.ProductId);
+            entity.ToTable("products");
 
+
+            // Configure the properties to map to the corresponding columns in the database
+            entity.Property(e => e.ProductId).HasColumnName("product_ID");
+
+            entity.Property(e => e.Name).HasColumnName("name");
             entity.Property(e => e.Category).HasColumnName("category");
             entity.Property(e => e.Description).HasColumnName("description");
             entity.Property(e => e.ImgLink).HasColumnName("img_link");
