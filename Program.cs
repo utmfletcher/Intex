@@ -28,8 +28,8 @@ namespace Intex
             builder.Services.AddAuthentication().AddGoogle(googleOptions =>
             {
                 // Fetch credentials from Azure Key Vault via configuration
-                googleOptions.ClientId = "802684679880-e90ndc7k624qf0lhdbml64drnqhj5csf.apps.googleusercontent.com";
-                googleOptions.ClientSecret = "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";
+                googleOptions.ClientId = "";
+                googleOptions.ClientSecret = "";
             });
 
             var app = builder.Build();
