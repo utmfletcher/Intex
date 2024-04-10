@@ -97,6 +97,32 @@ namespace Intex.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
+
+            // New properties added to the InputModel
+            [Required]
+            [Display(Name = "First Name")]
+            public string FirstName { get; set; } // New code
+
+            [Required]
+            [Display(Name = "Last Name")]
+            public string LastName { get; set; } // New code
+
+            [Required]
+            [DataType(DataType.Date)]
+            [Display(Name = "Birth Date")]
+            public DateTime BirthDate { get; set; } // New code
+
+            [Required]
+            [Display(Name = "Country of Residence")]
+            public string CountryOfResidence { get; set; } // New code
+
+            [Required]
+            [Display(Name = "Gender")]
+            public string Gender { get; set; } // New code
+
+            [Required]
+            [Display(Name = "Age")]
+            public int Age { get; set; } // New code
         }
 
 
