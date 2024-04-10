@@ -1,10 +1,10 @@
-﻿using FletchersBookStore.Models.ViewModels;
+﻿using Intex.Models.ViewModels;
 
 namespace Intex.Models.ViewModels
 {
     public class ProductListViewModel
     {
-        public IEnumerable<Product> Products { get; set; }
+        public IEnumerable<CleanProduct> CleanProducts { get; set; }
 
         public PaginationInfo PaginationInfo { get; set; } = new PaginationInfo();
     

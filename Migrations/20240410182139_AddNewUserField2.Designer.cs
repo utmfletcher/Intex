@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Intex.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240410040738_AddNewUserField2")]
+    [Migration("20240410182139_AddNewUserField2")]
     partial class AddNewUserField2
     {
         /// <inheritdoc />

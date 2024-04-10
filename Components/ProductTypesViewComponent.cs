@@ -15,8 +15,8 @@ namespace Intex.Components
         {
             ViewBag.SelectedProductType = RouteData?.Values["productType"];
 
-            var productType = _repo.Products
-                .Select(x => x.Category)
+            var productType = _repo.Categories
+                .Select(x => x.name)
                 .Distinct()
                 .OrderBy(x => x);
 

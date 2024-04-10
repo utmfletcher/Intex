@@ -1,4 +1,4 @@
-﻿using FletchersBookStore.Models.ViewModels;
+﻿
 using Intex.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 
-namespace FletchersBookStore.Infastructure
+namespace Intex.Infastructure
 {
     [HtmlTargetElement("div", Attributes = "page-model")]
     public class PaginationTagHelper : TagHelper
@@ -17,6 +17,7 @@ namespace FletchersBookStore.Infastructure
         {
             urlHelperFactory = temp;
         }
+        
 
         [ViewContext]
         [HtmlAttributeNotBound]

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Intex.Models;
 using Microsoft.AspNetCore.Builder;
-using FletchersBookStore.Models.ViewModels;
+
 
 
 namespace Intex

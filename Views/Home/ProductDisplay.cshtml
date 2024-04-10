@@ -9,7 +9,7 @@
 <h1>Lego Products</h1>
 
 
-<div class="row m-1 p-1">
+@* <div class="row m-1 p-1">
         <div class="col-2 ">
             <vc:product-types />
         </div>
@@ -22,6 +22,26 @@
             <div page-model="@Model.PaginationInfo" page-action="ProductDisplay" page-classes-enabled="true" page-class="btn"
                  page-class-normal="btn-outline-dark" page-class-selected="btn-primary" page-url-productType="@Model.CurrentProductType" class="btn-group pull-right m-1"></div>
         </div>
-    </div>
+    </div> *@
 
-  
+<div class="row m-1 p-1">
+    <div class="col-2">
+        <vc:product-types />
+    </div>
+    <div class="container col-10">
+        <div class="container mt-3">
+            <div class="row">
+                @foreach (CleanProduct p in Model.CleanProducts)
+                {
+                    <div class="col-6 mb-4">
+                        <partial name="ProductSummary" model="p" />
+                    </div>
+                }
+            </div>
+            <div page-model="@Model.PaginationInfo" page-action="ProductDisplay" page-classes-enabled="true" page-class="btn"
+                 page-class-normal="btn-outline-dark" page-class-selected="btn-primary" page-url-productType="@Model.CurrentProductType" class="btn-group pull-right m-1"></div>
+        </div>
+    </div>
+</div>
+
+

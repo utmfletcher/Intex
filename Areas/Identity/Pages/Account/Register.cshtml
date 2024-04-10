@@ -28,49 +28,6 @@
                 <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
             </div>
 
-            <!-- New properties -->
-            <div class="form-floating mb-3">
-                <input asp-for="Input.FirstName" class="form-control" placeholder="first name" />
-                <label asp-for="Input.FirstName">First Name</label>
-                <span asp-validation-for="Input.FirstName" class="text-danger"></span>
-            </div>
-
-            <div class="form-floating mb-3">
-                <input asp-for="Input.LastName" class="form-control" placeholder="last name" />
-                <label asp-for="Input.LastName">Last Name</label>
-                <span asp-validation-for="Input.LastName" class="text-danger"></span>
-            </div>
-
-            <div class="form-floating mb-3">
-                <input asp-for="Input.BirthDate" type="date" class="form-control" placeholder="birth date" />
-                <label asp-for="Input.BirthDate">Birth Date</label>
-                <span asp-validation-for="Input.BirthDate" class="text-danger"></span>
-            </div>
-
-            <div class="form-floating mb-3">
-                <input asp-for="Input.CountryOfResidence" class="form-control" placeholder="country of residence" />
-                <label asp-for="Input.CountryOfResidence">Country of Residence</label>
-                <span asp-validation-for="Input.CountryOfResidence" class="text-danger"></span>
-            </div>
-
-            <div class="form-floating mb-3">
-                <select asp-for="Input.Gender" class="form-select">
-                    <option value="">Select Gender</option>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                    <option value="Other">Other</option>
-                </select>
-                <label asp-for="Input.Gender">Gender</label>
-                <span asp-validation-for="Input.Gender" class="text-danger"></span>
-            </div>
-
-            <div class="form-floating mb-3">
-                <input asp-for="Input.Age" type="number" class="form-control" placeholder="age" />
-                <label asp-for="Input.Age">Age</label>
-                <span asp-validation-for="Input.Age" class="text-danger"></span>
-            </div>
-
-
             <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
         </form>
     </div>

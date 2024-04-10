@@ -10,5 +10,13 @@ namespace Intex.Models
             _context = temp;
         }
         public IQueryable<Product> Products => _context.Products;
+
+        public IQueryable<CleanProduct> CleanProducts => _context.CleanProducts;
+
+        public IQueryable<CategoryClean> Categories => _context.Categories;
+
+        public IQueryable<ProductCategoryClean> ProductCategories => _context.ProductCategories;
+
+
     }
 }

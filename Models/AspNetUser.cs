@@ -33,13 +33,7 @@ public partial class AspNetUser
 
     public int AccessFailedCount { get; set; }
 
-    // New properties
-    public string? FirstName { get; set; }
-    public string? LastName { get; set; }
-    public DateTime? BirthDate { get; set; }
-    public string? CountryOfResidence { get; set; }
-    public string? Gender { get; set; }
-    public int Age { get; set; }
+ 
 
     public virtual ICollection<AspNetUserClaim> AspNetUserClaims { get; set; } = new List<AspNetUserClaim>();
 
