@@ -7,5 +7,7 @@ namespace Intex.Models.ViewModels
         public IEnumerable<Product> Products { get; set; }
 
         public PaginationInfo PaginationInfo { get; set; } = new PaginationInfo();
+    
+        public string? CurrentProductType { get; set; }
     }
 }

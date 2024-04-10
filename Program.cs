@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Intex.Models;
 using Microsoft.AspNetCore.Builder;
+using FletchersBookStore.Models.ViewModels;
 
 
 namespace Intex
@@ -57,12 +58,38 @@ namespace Intex
 
             app.UseAuthentication();
             app.UseAuthorization();
-            
 
 
-            app.MapControllerRoute(
-                name: "default",
-                pattern: "{controller=Home}/{action=Index}/{pageNum?}");  // id is optional
+            //app.MapControllerRoute(
+            //    "default",
+            //    "{controller=Home}/{action=Index}"
+            //);
+
+            //app.MapControllerRoute(
+            //    "productTypeWithPage",
+            //    "{productType}/{pageNum:int}",
+            //    new { controller = "Products", action = "Index" }
+            //);
+
+            //app.MapControllerRoute(
+            //    "pagination",
+            //    "products/page/{pageNum:int}",
+            //    new { controller = "Products", action = "List" }
+            //);
+
+            //app.MapControllerRoute(
+            //    "type",
+            //    "products/{productType}",
+            //    new { controller = "Products", action = "ByType" }
+            //);
+
+            app.MapControllerRoute("pagenumandtype", "ProductDisplay/{productType}/{pageNum}", new { Controller = "Home", action ="ProductDisplay"});
+            app.MapControllerRoute("pagination", "ProductDisplay/{pageNum}", new {Controller = "Home", action = "ProductDisplay", pageNum = 1});
+            app.MapControllerRoute("productType", "ProductDisplay/{productType}", new { Controller = "Home", action = "ProductDisplay", pageNum = 1 });
+
+            app.MapDefaultControllerRoute();
+
+
 
             app.MapRazorPages();
 
