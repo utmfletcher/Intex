@@ -1,0 +1,51 @@
+﻿@model IEnumerable<Intex.Models.CleanProduct>
+
+@{
+    ViewData["Title"] = "Admin Dashboard - Clean Products";
+}
+
+<h2>Admin Dashboard</h2>
+
+@if (!Model.Any())
+{
+    <p>No products found.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Product ID</th>
+                <th>Name</th>
+                <th>Year</th>
+                <th>Number of Parts</th>
+                <th>Price</th>
+                <th>Image Link</th>
+                <!-- Include other headers if you want to display them -->
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var product in Model)
+            {
+                <tr>
+                    <td>@product.product_id</td>
+                    <td>@product.name</td>
+                    <td>@product.year</td>
+                    <td>@product.num_parts</td>
+                    <td>
+                        @if (product.price.HasValue)
+                        {
+                            @String.Format("{0:C}", product.price)
+                        }
+                    </td>
+                    <td>
+                        @if (!string.IsNullOrWhiteSpace(product.img_link))
+                        {
+                            <img src="@product.img_link" alt="Product Image" style="width:100px; height:auto;" />
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
