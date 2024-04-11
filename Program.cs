@@ -95,7 +95,10 @@ namespace Intex
 
             app.MapControllerRoute("pagination", "ProductDisplay/{pageNum}", new {Controller = "Home", action = "ProductDisplay", pageNum = 1, pageSize = 5});
             app.MapControllerRoute("productType", "ProductDisplay/{productType}", new { Controller = "Home", action = "ProductDisplay", pageNum = 1, pageSize = 5 });
- 
+
+
+            app.MapControllerRoute("productId", "ProductDetails/{productId}", new { Controller = "Home", action = "ProductDetails"});
+
 
             app.MapDefaultControllerRoute();
             app.UseSession();
