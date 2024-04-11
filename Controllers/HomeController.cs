@@ -27,9 +27,6 @@ namespace Intex.Controllers
 
         public IActionResult Index()
         {
-
-
-
             int pageSize = 20;
          
 
@@ -88,7 +85,7 @@ namespace Intex.Controllers
 
         public IActionResult ProductDetails(int productId)
         {
-            
+            productId = 1;
 
             var selectedProduct = _repo.CleanProducts
                 .Where(p => p.product_id == productId)
@@ -115,9 +112,43 @@ namespace Intex.Controllers
                 })
                 .FirstOrDefault(); // Get the first matching product or null if not found
 
+            // second query 
+            int pageSize = 5;
+
+
+            var query = _repo.Products
+                .Join(_repo.top_20_products,
+                      product => product.ProductId,
+                      top_20_product => top_20_product.product_ID,
+                      (product, top_20_product) => new { product, top_20_product })
+                .Select(joinedItem => new Top20ViewModel
+                {
+                    ProductId = joinedItem.product.ProductId,
+                    Name = joinedItem.product.Name,
+                    Year = joinedItem.product.Year,
+                    NumParts = joinedItem.product.NumParts,
+                    Price = joinedItem.product.Price,
+                    ImgLink = joinedItem.product.ImgLink,
+                    PrimaryColor = joinedItem.product.PrimaryColor,
+                    SecondaryColor = joinedItem.product.SecondaryColor,
+                    Description = joinedItem.product.Description,
+                    Category = joinedItem.product.Category,
+                    Rating = joinedItem.top_20_product.combined_score
+                })
+                .OrderByDescending(joinedItem => joinedItem.Rating);
+
+            var totalItems = query.Count();
+
+            var products = query
+                .Take(pageSize)
+                .ToList(); // Materialize the query to execute it
+
+
             var setup = new ProductListViewModel
             {
-                CleanProducts = new List<CleanProductViewModel> { selectedProduct }
+                Top20ViewModels = products,
+                CleanProducts = new List<CleanProductViewModel> { selectedProduct },
+                img_link = selectedProduct.ImgLink
                 // Initialize other necessary properties of ProductListViewModel if there are any
             };
 

@@ -5,6 +5,8 @@
 }
 @model Intex.Models.ViewModels.ProductListViewModel
 
+
+
 <div class="row">
     <div class="col-3">
         <button style="background-color: #f0f0f0; color: #000; font-size: 16px; padding: 10px 20px; border: none; cursor: pointer; border-radius: 5px; font-weight: bold; font-family: Arial, sans-serif;">
@@ -18,20 +20,29 @@
 </div>
 <br/>
 
-<div >
-    <div class="col-12" style="background-color: #f0f0f0; color: #000; padding: 20px; border-radius: 5px;">
-        @* Products *@
-        <div class="row">
+<div style="background-color: #f0f0f0; color: #000; padding: 20px; border-radius: 5px;">
+    <!-- Products -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <img src="@Model.img_link"  style="max-height: 100%; max-width: 100%;" />
+                </div> 
+            </div>
+        </div>
+        <div class="col-md-6">
+            <!-- This should be the column for the products, also taking up half the width on medium screens -->
             @foreach (CleanProductViewModel p in Model.CleanProducts)
             {
-                <div class="col-6 mb-4">
-                    <partial name="ProductSummary" model="p" />
+                <div class="mb-4">
+                    <partial name="ProductDetailsSummary" model="p" />
                 </div>
             }
         </div>
-        
     </div>
 </div>
+
+
 <br/>
 <br/>
 <div class="col">
@@ -39,25 +50,46 @@
         <h6>Recommended Products</h6>
     </div>
     <br/>
-    <div class="col-12" style="background-color: #f0f0f0; color: #000; padding: 20px; border-radius: 5px;">
-        <!-- Temporary placeholder text -->
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam.
-        @* <div class="row m-1 p-1">
-        <div class="col-2 ">
-        <vc:product-types />
+@*     <div class="container" style="background-color: #f0f0f0; color: #000; padding: 20px; border-radius: 5px;">
+        <div class="row">
+            @foreach (Top20ViewModel p in Model.Top20ViewModels)
+            {
+                <div class="col-12 col-md-2 mb-4">
+                    <!-- Use 'col-12' for small devices to take full width and 'col-md-2' for medium devices to take up one-fifth of the space -->
+                    <partial name="Top20ProductSummary" model="p" />
+                </div>
+            }
         </div>
-        <div class="container col-10">
-        @foreach (Product p in Model.Products)
-        {
-        <partial name="ProductSummary" model="p" />
-        }
-
-        <div page-model="@Model.PaginationInfo" page-action="ProductDisplay" page-classes-enabled="true" page-class="btn"
-        page-class-normal="btn-outline-dark" page-class-selected="btn-primary" page-url-productType="@Model.CurrentProductType" class="btn-group pull-right m-1"></div>
+    </div> *@
+    <div id="top20Carousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+            @for (int i = 0; i < Model.Top20ViewModels.Count(); i += 3)
+            {
+                <div class="carousel-item @(i == 0 ? "active" : "")">
+                    <div class="d-flex justify-content-around">
+                        @for (int j = 0; j < 3; j++)
+                        {
+                            // Check if the product exists before trying to display it
+                            if (Model.Top20ViewModels.Count() > i + j)
+                            {
+                                <partial name="Top20ProductSummary" model="Model.Top20ViewModels.ElementAt(i + j)" />
+                            }
+                        }
+                    </div>
+                </div>
+            }
         </div>
-        </div> *@
+        <button class="carousel-control-prev" type="button" data-bs-target="#top20Carousel" data-bs-slide="prev" style="background-color: rgba(0, 0, 0, 0.5); color: white;">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#top20Carousel" data-bs-slide="next" style="background-color: rgba(0, 0, 0, 0.5); color: white;">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
     </div>
     <br/>
+
     <div class="col-3">
         <button style="background-color: #f0f0f0; color: #000; font-size: 16px; padding: 10px 20px; border: none; cursor: pointer; border-radius: 5px; font-weight: bold; font-family: Arial, sans-serif;">
             &lt; Products
@@ -65,6 +97,10 @@
     </div>
 </div>
 <br />
+
+@section Scripts {
+    <script src="path-to-your-bootstrap-js/bootstrap.bundle.min.js"></script>
+}
 
 
 
