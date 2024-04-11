@@ -5,13 +5,11 @@ using Microsoft.EntityFrameworkCore;
 using Intex.Models;
 using Microsoft.AspNetCore.Builder;
 
-
-
 namespace Intex
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -27,7 +25,8 @@ namespace Intex
 
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-            builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true) // lina change this to false
+                .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services.AddControllersWithViews();
 
@@ -87,16 +86,59 @@ namespace Intex
             //    new { controller = "Products", action = "ByType" }
             //);
 
-            app.MapControllerRoute("PageNumTypeSize", "ProductDisplay/{productType}/{pageNum}/{pageSize}", new { Controller = "Home", action = "ProductDisplay" });
-            app.MapControllerRoute("pagenumandtype", "ProductDisplay/{productType}/{pageNum}", new { Controller = "Home", action ="ProductDisplay", pageSize = 5 });
+            app.MapControllerRoute("PageNumSizeType", "ProductDisplay/{pageNum}/{pageSize}/{productType}", new { Controller = "Home", action = "ProductDisplay", pageNum = 1, pageSize = 5 });
+
+            app.MapControllerRoute("PageNumSize", "ProductDisplay/{pageNum}/{pageSize}", new { Controller = "Home", action = "ProductDisplay" });
+            
+            app.MapControllerRoute("pagenumandtype", "ProductDisplay/{productType}/{pageNum}", new { Controller = "Home", action = "ProductDisplay", pageSize = 5 });
+
+
             app.MapControllerRoute("pagination", "ProductDisplay/{pageNum}", new {Controller = "Home", action = "ProductDisplay", pageNum = 1, pageSize = 5});
             app.MapControllerRoute("productType", "ProductDisplay/{productType}", new { Controller = "Home", action = "ProductDisplay", pageNum = 1, pageSize = 5 });
+ 
 
             app.MapDefaultControllerRoute();
             app.UseSession();
 
 
             app.MapRazorPages();
+            using(var scope = app.Services.CreateScope())
+            {
+                var roleManager 
+                    = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+                var roles = new[] { "Admin", "Manager","User" };
+
+                foreach (var role in roles)
+                {
+
+                    if (!await roleManager.RoleExistsAsync(role))
+                        await roleManager.CreateAsync(new IdentityRole(role));
+                }
+            }
+            using (var scope = app.Services.CreateScope())
+            {
+                var userManager
+                    = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+
+                string email = "admin@admin.com";
+                string password = "Legoisfun1975!";
+
+                if(await userManager.FindByEmailAsync(email)== null)
+                {
+                    var user = new IdentityUser();
+                    user.UserName = email;
+                    user.Email = email;
+                    user.EmailConfirmed = true;
+
+                    await userManager.CreateAsync(user, password);
+
+                    await userManager.AddToRoleAsync(user, "Admin");
+
+                }
+
+                
+            }
 
             app.Run();
         }

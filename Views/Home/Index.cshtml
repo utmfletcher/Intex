@@ -2,7 +2,7 @@
     ViewData["Title"] = "Home Page";
 }
 
-@model Intex.Models.ViewModels.ProductListViewModel
+@model Intex.Models.ViewModels.Top20ListViewModel
 
 <div class="text-center">
     <h1 class="display-4">Aurora Bricks</h1>
@@ -13,17 +13,27 @@
 <div  style="display: flex; justify-content: center; align-items: center; ">
     <button type="button" class="col-3 btn btn-info">Shop Now</button>
 </div>
+<br/>
+<div class="text-center">
+    <h5>Here Are Some Products that our customers love!</h5>
+</div>
 
 
 <div class="container mt-3">
+    @* Products *@
     <div class="row">
-        @foreach (CleanProductViewModel p in Model.CleanProducts.Take(4))
+        @foreach (Top20ViewModel p in Model.Top20ViewModels)
         {
-            <div class="col-lg-3 col-md-6 col-sm-12 mb-4">
-                <partial name="ProductSummary" model="p" />
+            <div class="col-3 mb-4">
+                <partial name="Top20ProductSummary" model="p" />
             </div>
         }
     </div>
+</div>
+
+<div style="display: flex; justify-content: center; align-items: center; flex-direction: column;">
+    <p>Explore more on our Products page</p>
+    <button type="button" class="col-3 btn btn-info" style="margin-top: 10px;">Shop Now</button>
 </div>
 
 
