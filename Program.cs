@@ -1,4 +1,5 @@
 using Intex.Data;
+using Intex.Pages;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Intex.Models;
@@ -34,6 +35,9 @@ namespace Intex
                 googleOptions.ClientId = builder.Configuration["Authentication:Google:ClientId"];
                 googleOptions.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
             });
+            builder.Services.AddRazorPages();
+            builder.Services.AddDistributedMemoryCache();
+            builder.Services.AddSession();
 
             var app = builder.Build();
 
@@ -94,7 +98,7 @@ namespace Intex
  
 
             app.MapDefaultControllerRoute();
-
+            app.UseSession();
 
 
             app.MapRazorPages();

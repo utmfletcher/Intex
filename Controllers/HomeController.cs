@@ -195,8 +195,6 @@ namespace Intex.Controllers
             return View(setup);
         }
 
-     
-
 
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
