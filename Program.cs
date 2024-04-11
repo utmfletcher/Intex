@@ -93,7 +93,7 @@ namespace Intex
             app.MapControllerRoute("productType", "ProductDisplay/{productType}", new { Controller = "Home", action = "ProductDisplay", pageNum = 1, pageSize = 5 });
 
             app.MapDefaultControllerRoute();
-
+            app.UseSession();
 
 
             app.MapRazorPages();

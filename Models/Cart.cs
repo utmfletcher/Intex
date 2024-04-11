@@ -35,7 +35,7 @@ namespace Intex.Models
        //add ability to clear cart
         public void Clear()=> Lines.Clear();
         //PRICE CALCULATOR 
-        public int CalculateTotal() => Lines.Sum(x => 5 * x.Quantity);
+        public int? CalculateTotal() => Lines.Sum(line => line.Quantity * line.Product.Price);
         public class Cartline
         {
             public int CartLineId { get; set; }

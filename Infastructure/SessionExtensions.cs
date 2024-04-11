@@ -9,6 +9,7 @@ namespace Intex.Infastructure
             session.SetString(key, JsonSerializer.Serialize(value));
 
         }
+        //get json of type t 
         public static T? GetJson<T>(this ISession session, string key)
         {
             var sessionData = session.GetString(key);

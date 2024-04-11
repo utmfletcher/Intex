@@ -3,7 +3,7 @@
 @{
 }
 <h1>Hello</h1>
-<table class="table table-boardered table-striped">
+<table class="table table-bordered table-striped">
     <thead>
         <tr>
             <th>Product Name</th>
@@ -11,18 +11,26 @@
             <th class="text-right">Amount</th>
             <th class="text-right">Subtotal</th>
         </tr>
-
     </thead>
-    <thbody>
-        @foreach (var l in Model.Cart?.Lines ?? Enumerable.Empty<Cart.Cartline>())
+    <tbody>
+        @foreach (var line in Model.Cart?.Lines ?? Enumerable.Empty<Cart.Cartline>())
         {
             <tr>
-                <td>@l.Product.Name</td>
-                <td>@l.Quantity</td>
+                <td>@line.Product.Name</td>
+                <td>@line.Quantity</td>
+                <td class="text-right">$@line.Product.Price</td>
+                <td class="text-right">$@(line.Quantity * line.Product.Price)</td>
             </tr>
-
-
         }
-    </thbody>
-   
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="3"> Total</td>
+            <td class="text-right">$@(Model.Cart?.CalculateTotal() ?? 0)</td>
+        </tr>
+    </tfoot>
 </table>
+<div class="text-center">
+    <a class="btn btn-primary" href="@Model.ReturnUrl> to Shopping</a>
+</div>
+
