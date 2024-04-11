@@ -87,7 +87,9 @@ namespace Intex
             //    "products/{productType}",
             //    new { controller = "Products", action = "ByType" }
             //);
-            
+            app.MapControllerRoute( "ProductDisplayWithColour", "ProductDisplay/{pageNum}/{pageSize}/{productType}/{productColour}", new { Controller = "Home", action = "ProductDisplay", pageNum = 1, pageSize = 5, productType = (string?)null, productColour = (string?)null }
+);
+
             app.MapControllerRoute("PageNumSizeType", "ProductDisplay/{pageNum}/{pageSize}/{productType}", new { Controller = "Home", action = "ProductDisplay", pageNum = 1, pageSize = 5 });
 
             app.MapControllerRoute("PageNumSize", "ProductDisplay/{pageNum}/{pageSize}", new { Controller = "Home", action = "ProductDisplay" });

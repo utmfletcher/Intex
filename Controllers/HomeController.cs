@@ -229,7 +229,7 @@ namespace Intex.Controllers
         }
 
 
-        public IActionResult ProductDisplay(int pageNum,  int pageSize, string? productType)
+        public IActionResult ProductDisplay(int pageNum,  int pageSize, string? productType, string? productColour)
         {
             //pageSize = 10;
 
@@ -246,6 +246,11 @@ namespace Intex.Controllers
                       (combined, category) => new { combined.product, CategoryName = category.name });
 
             // Apply filtering before grouping
+            if (!string.IsNullOrWhiteSpace(productColour))
+            {
+                query = query.Where(p => p.product.primary_color == productColour || p.product.secondary_color == productColour);
+            }
+
             if (!string.IsNullOrWhiteSpace(productType))
             {
                 query = query.Where(combined => combined.CategoryName == productType);
