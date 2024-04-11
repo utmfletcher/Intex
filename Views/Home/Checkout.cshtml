@@ -1,0 +1,88 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model Cart
+
+@{
+    ViewData["Title"] = "Create Order";
+}
+
+<h1>CheckOut</h1>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Product Name</th>
+            <th>Quantity</th>
+            <th class="text-right">Amount</th>
+            <th class="text-right">Subtotal</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var line in Model?.Lines ?? Enumerable.Empty<Cart.Cartline>())
+        {
+            <tr>
+                <td>@line.Product.Name</td>
+                <td>@line.Quantity</td>
+                <td class="text-right">$@line.Product.Price</td>
+                <td class="text-right">$@(line.Quantity * line.Product.Price)</td>
+                <td class="text-center">
+                    <form asp-page-handler="Remove" method="post">
+                        <input type="hidden" name="ProductId" value="@line.Product.ProductId" />
+                      
+                    </form>
+                </td>
+
+            </tr>
+        }
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="3"> Total</td>
+            <td class="text-right">$@(Model?.CalculateTotal() ?? 0)</td>
+        </tr>
+    </tfoot>
+</table>
+
+<form asp-action="PlaceOrder" asp-controller="Customer" method="post">
+    <h2>Shipping Address</h2>
+    <div>
+        <label for="street">Street:</label>
+        <input type="text" id="street" name="street" required>
+    </div>
+    <div>
+        <label for="city">City:</label>
+        <input type="text" id="city" name="city" required>
+    </div>
+    <div>
+        <label for="state">State:</label>
+        <input type="text" id="state" name="state" required>
+    </div>
+    <div>
+        <label for="zip">Zip Code:</label>
+        <input type="text" id="zip" name="zip" required>
+    </div>
+    <div>
+        <label for="country">Country:</label>
+        <input type="text" id="country" name="country" required>
+    </div>
+
+    <h2>Bank and Payment Information</h2>
+    <div>
+        <label for="bank">Bank Name:</label>
+        <input type="text" id="bank" name="bank" required>
+    </div>
+    <div>
+        <label for="typeOfCard">Type of Card:</label>
+        <select id="typeOfCard" name="typeOfCard" required>
+            <option value="Visa">Visa</option>
+            <option value="MasterCard">MasterCard</option>
+            <option value="AmericanExpress">American Express</option>
+            <option value="Discover">Discover</option>
+            <option value="JCB">JCB</option>
+        </select>
+    </div>
+    <button type="submit">Place Order</button>
+</form>

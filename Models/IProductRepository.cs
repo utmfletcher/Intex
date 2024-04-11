@@ -10,5 +10,7 @@
         public IQueryable<ProductCategoryClean> ProductCategories { get; }
 
         public IQueryable<top_20_product> top_20_products  { get; }
+        public IQueryable<Order> Orders { get; }
+
     }
 }

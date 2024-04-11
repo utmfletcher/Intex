@@ -1,12 +1,16 @@
 
+using Intex.Infastructure;
 using Intex.Models;
 using Intex.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Build.Construction;
 using Microsoft.EntityFrameworkCore;
+using SQLitePCL;
 using System.Diagnostics;
 using System.Drawing.Printing;
+
 
 namespace Intex.Controllers
 {
@@ -15,6 +19,7 @@ namespace Intex.Controllers
        // private readonly ILogger<HomeController> _logger;
 
         private IProductRepository _repo;
+        private const string Key = "Cart";
 
        /* public HomeController(ILogger<HomeController> logger)
         {
@@ -74,7 +79,79 @@ namespace Intex.Controllers
             // Pass the viewModel to the "ProductDisplay" view
             return View(setup);
         }
+        public  IActionResult Cart()
+        {
+            var cart = GetCurrentCart();
+            if(cart.Lines.Count == 0)
+            {
+                return View("EmptyCart");
 
+            }
+            return View(cart);
+        }
+        private Cart GetCurrentCart()
+        {
+            var cart = HttpContext.Session.GetJson<Cart>(Key);
+           // return HttpContext.Session.GetJson<SessionCart>(CartSessionKey) ?? new SessionCart();
+            if(cart == null)
+            {
+                cart = new Cart();
+                HttpContext.Session.SetJson(Key, cart);
+            }
+            return cart;
+        }
+        public IActionResult Checkout()
+        {
+            var cart = GetCurrentCart();
+            if (cart.Lines.Count == 0)
+            {
+                return View("EmptyCart");
+
+            }
+            return View(cart);
+        }
+        [HttpGet]
+        /*   public async Task<IActionResult> Checkout()
+           {
+               if(!User.Identity.IsAuthenticated)
+               {
+                  // string checkoutUrl = Url.Action("Checkout", controller: Customer);
+
+               }
+           }*/
+        public IActionResult PlaceOrder(string street, string city, string state, string country, string bank, string typeOfCard)
+        {
+            var cart = GetCurrentCart();
+            var order = new Order
+            {
+                TransactionId = new Random().Next(100000, 999999),
+                CustomerId = new Random().Next(10000, 999999),
+                Date = DateOnly.FromDateTime(DateTime.Now).ToString(),
+                DayOfWeek = DateTime.Now.DayOfWeek.ToString(),
+                Time = (byte)DateTime.Now.Hour,
+                EntryMode = "CVC",
+                Amount = (short?)cart.CalculateTotal(),
+                TypeOfTransaction = "Online",
+                CountryOfTransaction = country,
+                ShippingAddress = $"{street},{city},{state}",
+                Bank = bank,
+                TypeOfCard = typeOfCard,
+                Fraud = 0 // still need determination
+            };
+
+             // Add the order to the context
+            //_repo.SaveChanges(); // Save changes to the database
+
+            // Optionally, you can remove the cart from the session here
+            // HttpContext.Session.Remove("Cart");
+
+            // Redirect to a confirmation page or another action method
+            return RedirectToAction("OrderConfirmation");
+        }
+
+        // tabel.Orders. Add(Order)    another save changes 
+        //HttpContext.Session.Remove(CartSession)
+        //return View(page, order)
         public IActionResult Privacy()
         {
             return View();
@@ -91,40 +168,6 @@ namespace Intex.Controllers
         }
 
 
-        //public IActionResult ProductDisplay(int pageNum, string? productType)    
-        //{
-        //    int pageSize = 5;
-        //    var setup = new ProductListViewModel
-        //    {
-        //        Products = _repo.Products
-        //        .Where(x => x.Category == productType || productType == null)
-        //        .OrderBy(x => x.Name)
-        //        .Skip(pageSize * (pageNum - 1))
-        //        .Take(pageSize),
-
-        //        PaginationInfo = new PaginationInfo
-        //        {
-        //            CurrentPage = pageNum,
-        //            ItemsPerPage = pageSize,
-        //            TotalItems = productType == null ? _repo.Products.Count() : _repo.Products.Where(x => x.Category == productType).Count()
-        //        },
-
-        //        CurrentProductType = productType
-        //    };
-
-
-        //    // Pass the viewModel to the "ProductDisplay" view
-        //    return View(setup);
-        //}
-        // FUTURE ADMIN PAGE
-        //[Authorize(Roles = "Admin")]
-        //public IActionResult AdminDashboard()
-        //{
-        //    // Logic to gather data for the admin dashboard
-        //    // This might involve querying databases, preparing view models, etc.
-
-        //    return View();
-        //}
         [Authorize(Roles = "Admin")]
         public IActionResult AdminDashboard()
         {
