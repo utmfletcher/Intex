@@ -42,20 +42,20 @@ namespace Intex.Controllers
                 .Join(_repo.Categories,
                       combined => combined.productCategory.c_id,
                       category => category.category_id,
-                      (combined, category) => new { combined.product, category })
-                .Where(combined => productType == null || combined.category.name == productType)
-                .OrderBy(combined => combined.product.name)
-                .Select(combined => new CleanProduct
+                      (combined, category) => new { combined.product, CategoryName = category.name })
+                .GroupBy(combined => combined.product)
+                .Select(grouped => new CleanProductViewModel
                 {
-                    product_id = combined.product.product_id,
-                    name = combined.product.name,
-                    year = combined.product.year,
-                    num_parts = combined.product.num_parts,
-                    price = combined.product.price,
-                    img_link = combined.product.img_link,
-                    primary_color = combined.product.primary_color,
-                    secondary_color = combined.product.secondary_color,
-                    description = combined.product.description
+                    ProductId = grouped.Key.product_id,
+                    Name = grouped.Key.name,
+                    Year = grouped.Key.year,
+                    NumParts = grouped.Key.num_parts,
+                    Price = grouped.Key.price,
+                    ImgLink = grouped.Key.img_link,
+                    PrimaryColor = grouped.Key.primary_color,
+                    SecondaryColor = grouped.Key.secondary_color,
+                    Description = grouped.Key.description,
+                    CategoryNames = grouped.Select(g => g.CategoryName).ToList()
                 });
 
             var totalItems = query.Count();
@@ -120,14 +120,12 @@ namespace Intex.Controllers
         //    return View(setup);
         //}
 
-        public IActionResult ProductDisplay(int pageNum, string? productType)
+        public IActionResult ProductDisplay(int pageNum, string? productType, int pageSize)
         {
-      
+            pageSize = pageSize;
 
-            int pageSize = 5;
             pageNum = Math.Max(1, pageNum); // Ensure pageNum is at least 1
 
-            // Using LINQ method syntax to join and filter data
             var query = _repo.CleanProducts
                 .Join(_repo.ProductCategories,
                       product => product.product_id,
@@ -136,25 +134,33 @@ namespace Intex.Controllers
                 .Join(_repo.Categories,
                       combined => combined.productCategory.c_id,
                       category => category.category_id,
-                      (combined, category) => new { combined.product, category })
-                .Where(combined => productType == null || combined.category.name == productType)
-                .OrderBy(combined => combined.product.name)
-                .Select(combined => new CleanProduct
+                      (combined, category) => new { combined.product, CategoryName = category.name });
+
+            // Apply filtering before grouping
+            if (!string.IsNullOrWhiteSpace(productType))
+            {
+                query = query.Where(combined => combined.CategoryName == productType);
+            }
+
+            var groupedQuery = query
+                .GroupBy(combined => combined.product)
+                .Select(grouped => new CleanProductViewModel
                 {
-                    product_id = combined.product.product_id,
-                    name = combined.product.name,
-                    year = combined.product.year,
-                    num_parts = combined.product.num_parts,
-                    price = combined.product.price,
-                    img_link = combined.product.img_link,
-                    primary_color = combined.product.primary_color,
-                    secondary_color = combined.product.secondary_color,
-                    description = combined.product.description
+                    ProductId = grouped.Key.product_id,
+                    Name = grouped.Key.name,
+                    Year = grouped.Key.year,
+                    NumParts = grouped.Key.num_parts,
+                    Price = grouped.Key.price,
+                    ImgLink = grouped.Key.img_link,
+                    PrimaryColor = grouped.Key.primary_color,
+                    SecondaryColor = grouped.Key.secondary_color,
+                    Description = grouped.Key.description,
+                    CategoryNames = grouped.Select(g => g.CategoryName).ToList()
                 });
 
-            var totalItems = query.Count();
+            var totalItems = groupedQuery.Count();
 
-            var products = query
+            var products = groupedQuery
                 .Skip((pageNum - 1) * pageSize)
                 .Take(pageSize)
                 .ToList(); // Materialize the query to execute it
@@ -171,7 +177,6 @@ namespace Intex.Controllers
                 CurrentProductType = productType
             };
 
-            // Pass the viewModel to the "ProductDisplay" view
             return View(setup);
         }
 
