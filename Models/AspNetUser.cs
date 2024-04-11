@@ -6,9 +6,7 @@ namespace Intex.Models;
 public partial class AspNetUser
 {
     public string Id { get; set; } = null!;
-
     public string? UserName { get; set; }
-
     public string? NormalizedUserName { get; set; }
 
     public string? Email { get; set; }
@@ -34,6 +32,8 @@ public partial class AspNetUser
     public bool LockoutEnabled { get; set; }
 
     public int AccessFailedCount { get; set; }
+
+ 
 
     public virtual ICollection<AspNetUserClaim> AspNetUserClaims { get; set; } = new List<AspNetUserClaim>();
 

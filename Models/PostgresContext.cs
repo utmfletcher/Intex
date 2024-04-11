@@ -36,6 +36,12 @@ public partial class PostgresContext : DbContext
 
     public virtual DbSet<Product> Products { get; set; } = null!;
 
+    public virtual DbSet<CleanProduct> CleanProducts { get; set; } = null !;
+
+    public virtual DbSet<CategoryClean> Categories { get; set; }
+
+    public virtual DbSet<ProductCategoryClean> ProductCategories { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseNpgsql("Name=ConnectionStrings:PostgresConnection");
 
@@ -189,6 +195,8 @@ public partial class PostgresContext : DbContext
             entity.Property(e => e.SecondaryColor).HasColumnName("secondary_color");
             entity.Property(e => e.Year).HasColumnName("year");
         });
+
+ 
 
         OnModelCreatingPartial(modelBuilder);
     }

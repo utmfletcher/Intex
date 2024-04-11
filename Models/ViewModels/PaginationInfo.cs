@@ -1,4 +1,4 @@
-﻿namespace FletchersBookStore.Models.ViewModels
+﻿namespace Intex.Models.ViewModels
 {
     public class PaginationInfo
     {

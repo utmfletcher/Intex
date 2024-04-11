@@ -1,4 +1,4 @@
-﻿using FletchersBookStore.Models.ViewModels;
+﻿
 using Intex.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -17,6 +17,7 @@ namespace Intex.Infastructure
         {
             urlHelperFactory = temp;
         }
+        
 
         [ViewContext]
         [HtmlAttributeNotBound]
