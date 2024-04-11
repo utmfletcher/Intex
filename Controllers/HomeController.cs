@@ -85,7 +85,10 @@ namespace Intex.Controllers
         {
             return View();
         }
-
+        public IActionResult ProductDetails()
+        {
+            return View();
+        }
 
 
         //public IActionResult ProductDisplay(int pageNum, string? productType)    
@@ -173,6 +176,8 @@ namespace Intex.Controllers
 
             return View(setup);
         }
+
+     
 
 
 
