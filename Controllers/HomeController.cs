@@ -85,10 +85,45 @@ namespace Intex.Controllers
         {
             return View();
         }
-        public IActionResult ProductDetails()
+        public IActionResult ProductDetails(int productId)
         {
-            return View();
+            productId = 1;
+
+            var selectedProduct = _repo.CleanProducts
+                .Where(p => p.product_id == productId)
+                .Join(_repo.ProductCategories,
+                      product => product.product_id,
+                      productCategory => productCategory.p_id,
+                      (product, productCategory) => new { product, productCategory })
+                .Join(_repo.Categories,
+                      combined => combined.productCategory.c_id,
+                      category => category.category_id,
+                      (combined, category) => new { combined.product, CategoryName = category.name })
+                .Select(combined => new CleanProductViewModel
+                {
+                    ProductId = combined.product.product_id,
+                    Name = combined.product.name,
+                    Year = combined.product.year,
+                    NumParts = combined.product.num_parts,
+                    Price = combined.product.price,
+                    ImgLink = combined.product.img_link,
+                    PrimaryColor = combined.product.primary_color,
+                    SecondaryColor = combined.product.secondary_color,
+                    Description = combined.product.description,
+                    CategoryNames = new List<string> { combined.CategoryName }
+                })
+                .FirstOrDefault(); // Get the first matching product or null if not found
+
+            var setup = new ProductListViewModel
+            {
+                CleanProducts = new List<CleanProductViewModel> { selectedProduct }
+                // Initialize other necessary properties of ProductListViewModel if there are any
+            };
+
+            return View(setup);
         }
+
+
 
 
         //public IActionResult ProductDisplay(int pageNum, string? productType)    
@@ -194,8 +229,6 @@ namespace Intex.Controllers
 
             return View(setup);
         }
-
-     
 
 
 
