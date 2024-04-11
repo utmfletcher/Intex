@@ -113,6 +113,24 @@ namespace Intex.Controllers
         //    // Pass the viewModel to the "ProductDisplay" view
         //    return View(setup);
         //}
+        // FUTURE ADMIN PAGE
+        //[Authorize(Roles = "Admin")]
+        //public IActionResult AdminDashboard()
+        //{
+        //    // Logic to gather data for the admin dashboard
+        //    // This might involve querying databases, preparing view models, etc.
+
+        //    return View();
+        //}
+        [Authorize(Roles = "Admin")]
+        public IActionResult AdminDashboard()
+        {
+            // Retrieve all CleanProducts using LINQ.
+            var cleanProductsList = _repo.CleanProducts.ToList();
+
+            // Pass the list of products to the view.
+            return View(cleanProductsList);
+        }
 
         public IActionResult ProductDisplay(int pageNum,  int pageSize, string? productType)
         {
