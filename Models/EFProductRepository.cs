@@ -23,6 +23,8 @@ namespace Intex.Models
 
         public IQueryable<top_20_product> top_20_products => _context.top_20_products;
 
+        public IQueryable<ItemReccomendation> ItemReccomendations => _context.ItemReccomendations;
+
         public void UpdateCleanProduct(CleanProduct product)
         {
             _context.Entry(product).State = EntityState.Modified;
