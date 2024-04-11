@@ -167,7 +167,7 @@ namespace Intex.Controllers
             // Retrieve all CleanProducts using LINQ, ordered by product_id in ascending order.
             var cleanProductsList = _repo.CleanProducts.OrderBy(p => p.product_id).ToList();
 
-            // Pass the sorted list of products to the view.
+            // Pass the sorted list of products to the view Keep this one
             return View(cleanProductsList);
         }
 
