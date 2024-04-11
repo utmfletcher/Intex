@@ -87,17 +87,22 @@ namespace Intex
             //    "products/{productType}",
             //    new { controller = "Products", action = "ByType" }
             //);
-
+            
             app.MapControllerRoute("PageNumSizeType", "ProductDisplay/{pageNum}/{pageSize}/{productType}", new { Controller = "Home", action = "ProductDisplay", pageNum = 1, pageSize = 5 });
 
             app.MapControllerRoute("PageNumSize", "ProductDisplay/{pageNum}/{pageSize}", new { Controller = "Home", action = "ProductDisplay" });
             
             app.MapControllerRoute("pagenumandtype", "ProductDisplay/{productType}/{pageNum}", new { Controller = "Home", action = "ProductDisplay", pageSize = 5 });
 
+           
 
             app.MapControllerRoute("pagination", "ProductDisplay/{pageNum}", new {Controller = "Home", action = "ProductDisplay", pageNum = 1, pageSize = 5});
             app.MapControllerRoute("productType", "ProductDisplay/{productType}", new { Controller = "Home", action = "ProductDisplay", pageNum = 1, pageSize = 5 });
- 
+            
+            app.MapControllerRoute("productId", "ProductDetails/{productId}", new { Controller = "Home", action = "ProductDetails"});
+
+            
+
 
             app.MapDefaultControllerRoute();
             app.UseSession();
