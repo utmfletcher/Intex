@@ -324,6 +324,20 @@ namespace Intex.Controllers
             }
             return View(product);
         }
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> ListUsers()
+        {
+            var users = _userManager.Users.Select(user => new UserRolesViewModel
+            {
+                UserId = user.Id,
+                UserName = user.UserName,
+                Email = user.Email,
+                Roles = _userManager.GetRolesAsync(user).Result  // Synchronous call for simplicity, better to use async in real applications
+            }).ToList();
+
+            return View(users);
+        }
+
 
         // Displays the delete confirmation page
         [HttpGet]
