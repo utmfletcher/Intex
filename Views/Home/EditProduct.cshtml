@@ -1,0 +1,53 @@
+﻿@model Intex.Models.CleanProduct
+
+@{
+    ViewData["Title"] = "Edit Product";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="EditProduct" method="post">
+    <input type="hidden" asp-for="product_id" />
+
+    <div class="form-group">
+        <label asp-for="name"></label>
+        <input asp-for="name" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="year"></label>
+        <input asp-for="year" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="num_parts"></label>
+        <input asp-for="num_parts" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="price"></label>
+        <input asp-for="price" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="img_link"></label>
+        <input asp-for="img_link" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="primary_color"></label>
+        <input asp-for="primary_color" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="secondary_color"></label>
+        <input asp-for="secondary_color" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="description"></label>
+        <textarea asp-for="description" class="form-control"></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save changes</button>
+</form>
