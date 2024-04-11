@@ -6,6 +6,7 @@
 
 <h2>Admin Dashboard</h2>
 
+
 @if (!Model.Any())
 {
     <p>No products found.</p>
@@ -21,7 +22,7 @@ else
                 <th>Number of Parts</th>
                 <th>Price</th>
                 <th>Image Link</th>
-                <!-- Include other headers if you want to display them -->
+                <th>Actions</th> <!-- Column for actions like Edit/Delete -->
             </tr>
         </thead>
         <tbody>
@@ -43,6 +44,14 @@ else
                         {
                             <img src="@product.img_link" alt="Product Image" style="width:100px; height:auto;" />
                         }
+                    </td>
+                    <td>
+                        <!-- Edit Button -->
+                        <a href="@Url.Action("EditProduct", "Home", new { id = product.product_id })" class="btn btn-primary">Edit</a>
+
+                      
+                        <a href="@Url.Action("DeleteProduct", "Home", new { id = product.product_id })" class="btn btn-danger">Delete</a>
+
                     </td>
                 </tr>
             }

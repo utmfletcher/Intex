@@ -32,9 +32,6 @@ namespace Intex.Controllers
 
         public IActionResult Index()
         {
-
-
-
             int pageSize = 20;
          
 
@@ -162,21 +159,126 @@ namespace Intex.Controllers
         {
             return View();
         }
-        public IActionResult ProductDetails()
+
+        public IActionResult ProductDetails(int productId)
         {
-            return View();
+            
+
+            var selectedProduct = _repo.CleanProducts
+                .Where(p => p.product_id == productId)
+                .Join(_repo.ProductCategories,
+                      product => product.product_id,
+                      productCategory => productCategory.p_id,
+                      (product, productCategory) => new { product, productCategory })
+                .Join(_repo.Categories,
+                      combined => combined.productCategory.c_id,
+                      category => category.category_id,
+                      (combined, category) => new { combined.product, CategoryName = category.name })
+                .Select(combined => new CleanProductViewModel
+                {
+                    ProductId = combined.product.product_id,
+                    Name = combined.product.name,
+                    Year = combined.product.year,
+                    NumParts = combined.product.num_parts,
+                    Price = combined.product.price,
+                    ImgLink = combined.product.img_link,
+                    PrimaryColor = combined.product.primary_color,
+                    SecondaryColor = combined.product.secondary_color,
+                    Description = combined.product.description,
+                    CategoryNames = new List<string> { combined.CategoryName }
+                })
+                .FirstOrDefault(); // Get the first matching product or null if not found
+
+            // second query 
+            int pageSize = 5;
+
+
+            var query = _repo.Products
+                .Join(_repo.top_20_products,
+                      product => product.ProductId,
+                      top_20_product => top_20_product.product_ID,
+                      (product, top_20_product) => new { product, top_20_product })
+                .Select(joinedItem => new Top20ViewModel
+                {
+                    ProductId = joinedItem.product.ProductId,
+                    Name = joinedItem.product.Name,
+                    Year = joinedItem.product.Year,
+                    NumParts = joinedItem.product.NumParts,
+                    Price = joinedItem.product.Price,
+                    ImgLink = joinedItem.product.ImgLink,
+                    PrimaryColor = joinedItem.product.PrimaryColor,
+                    SecondaryColor = joinedItem.product.SecondaryColor,
+                    Description = joinedItem.product.Description,
+                    Category = joinedItem.product.Category,
+                    Rating = joinedItem.top_20_product.combined_score
+                })
+                .OrderByDescending(joinedItem => joinedItem.Rating);
+
+            var totalItems = query.Count();
+
+            var products = query
+                .Take(pageSize)
+                .ToList(); // Materialize the query to execute it
+
+
+            var setup = new ProductListViewModel
+            {
+                Top20ViewModels = products,
+                CleanProducts = new List<CleanProductViewModel> { selectedProduct },
+                img_link = selectedProduct.ImgLink
+                // Initialize other necessary properties of ProductListViewModel if there are any
+            };
+
+            return View(setup);
         }
 
 
+
+
+        //public IActionResult ProductDisplay(int pageNum, string? productType)    
+        //{
+        //    int pageSize = 5;
+        //    var setup = new ProductListViewModel
+        //    {
+        //        Products = _repo.Products
+        //        .Where(x => x.Category == productType || productType == null)
+        //        .OrderBy(x => x.Name)
+        //        .Skip(pageSize * (pageNum - 1))
+        //        .Take(pageSize),
+
+        //        PaginationInfo = new PaginationInfo
+        //        {
+        //            CurrentPage = pageNum,
+        //            ItemsPerPage = pageSize,
+        //            TotalItems = productType == null ? _repo.Products.Count() : _repo.Products.Where(x => x.Category == productType).Count()
+        //        },
+
+        //        CurrentProductType = productType
+        //    };
+
+
+        //    // Pass the viewModel to the "ProductDisplay" view
+        //    return View(setup);
+        //}
+        // FUTURE ADMIN PAGE
+        //[Authorize(Roles = "Admin")]
+        //public IActionResult AdminDashboard()
+        //{
+        //    // Logic to gather data for the admin dashboard
+        //    // This might involve querying databases, preparing view models, etc.
+
+        //    return View();
+        //}
         [Authorize(Roles = "Admin")]
         public IActionResult AdminDashboard()
         {
-            // Retrieve all CleanProducts using LINQ.
-            var cleanProductsList = _repo.CleanProducts.ToList();
+            // Retrieve all CleanProducts using LINQ, ordered by product_id in ascending order.
+            var cleanProductsList = _repo.CleanProducts.OrderBy(p => p.product_id).ToList();
 
-            // Pass the list of products to the view.
+            // Pass the sorted list of products to the view Keep this one
             return View(cleanProductsList);
         }
+
 
         public IActionResult ProductDisplay(int pageNum,  int pageSize, string? productType)
         {
@@ -236,6 +338,78 @@ namespace Intex.Controllers
             };
 
             return View(setup);
+        }
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public IActionResult EditProduct(int id)
+        {
+            var product = _repo.CleanProducts.FirstOrDefault(p => p.product_id == id);
+            if (product == null) return NotFound();
+            return View(product);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public IActionResult EditProduct(CleanProduct product)
+        {
+            if (ModelState.IsValid)
+            {
+                _repo.UpdateCleanProduct(product);
+                _repo.SaveChanges();
+                return RedirectToAction(nameof(AdminDashboard));
+            }
+            return View(product);
+        }
+
+        // Displays the delete confirmation page
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public IActionResult DeleteProduct(int id)
+        {
+            var product = _repo.CleanProducts.FirstOrDefault(p => p.product_id == id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            return View("DeleteConfirmation", product);
+        }
+
+        // Processes the deletion of a product
+        [HttpPost, ActionName("DeleteProduct")]
+        [Authorize(Roles = "Admin")]
+        public IActionResult DeleteProductConfirmed(int id)
+        {
+            var product = _repo.CleanProducts.FirstOrDefault(p => p.product_id == id);
+            if (product != null)
+            {
+                _repo.DeleteCleanProduct(product); // Assume your repository has this method
+                _repo.SaveChanges();
+            }
+
+            return RedirectToAction(nameof(AdminDashboard));
+        }
+        // Display the form for adding a new product
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public IActionResult CreateProduct()
+        {
+            return View("CreateProduct", new CleanProduct()); // Pass a new product to the view
+        }
+
+        // Process the form submission for a new product
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public IActionResult CreateProduct(CleanProduct product)
+        {
+            if (ModelState.IsValid)
+            {
+                _repo.AddCleanProduct(product); // Add the product to the database
+                _repo.SaveChanges(); // Save the changes
+                return RedirectToAction(nameof(AdminDashboard)); // Redirect to the dashboard
+            }
+
+            return View(product); // If invalid, show the form again with validation messages
         }
 
 
