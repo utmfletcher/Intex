@@ -1,5 +1,6 @@
 ﻿using Intex.Data;
 using Microsoft.EntityFrameworkCore; // Ensure you have this using directive for EntityState
+using System;
 using System.Linq;
 
 namespace Intex.Models
@@ -27,24 +28,33 @@ namespace Intex.Models
 
         public IQueryable<User6Product> User6Products => _context.User6Products;
 
+        public IQueryable<Order> Orders => _context.Orders;
+
+        object IProductRepository.Orders => throw new NotImplementedException();
+
         public void UpdateCleanProduct(CleanProduct product)
         {
             _context.Entry(product).State = EntityState.Modified;
         }
+
         public void DeleteCleanProduct(CleanProduct product)
         {
             _context.CleanProducts.Remove(product);
         }
+
         public void AddCleanProduct(CleanProduct product)
         {
             _context.CleanProducts.Add(product);
         }
 
+        public void AddOrder(Order order)
+        {
+            _context.Orders.Add(order);
+        }
 
         public void SaveChanges()
         {
             _context.SaveChanges();
         }
     }
-
 }

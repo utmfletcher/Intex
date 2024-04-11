@@ -39,14 +39,9 @@
 </table>
 <div class="text-center">
     <a class="btn btn-primary" href="@Model.ReturnUrl">Back to Shopping</a>
-    <div class="text-center">
-        <a class="btn btn-primary" href="@Model.Url.Page("/Checkout")">Checkout</a>
-        <!-- Or you can use a form to submit to the checkout handler -->
-        <!--
-        <form method="post" asp-page-handler="Checkout">
-            <button type="submit" class="btn btn-primary">Checkout</button>
-        </form>
-        -->
-    </div>
+    <a class="btn btn-primary" asp-area="" asp-controller="Home" asp-action="Checkout">Checkout</a>
+
+</div>
+
 </div>
 

@@ -126,7 +126,7 @@ namespace Intex.Controllers
             }
             return View(cart);
         }
-        [HttpGet]
+
         /*   public async Task<IActionResult> Checkout()
            {
                if(!User.Identity.IsAuthenticated)
@@ -135,6 +135,7 @@ namespace Intex.Controllers
 
                }
            }*/
+        [HttpPost]
         public IActionResult PlaceOrder(string street, string city, string state, string country, string bank, string typeOfCard)
         {
             var cart = GetCurrentCart();
@@ -155,15 +156,16 @@ namespace Intex.Controllers
                 Fraud = 0 // still need determination
             };
 
-             // Add the order to the context
-            //_repo.SaveChanges(); // Save changes to the database
+            _repo.AddOrder(order); // Add the order to the repository
+            _repo.SaveChanges();
 
             // Optionally, you can remove the cart from the session here
             // HttpContext.Session.Remove("Cart");
 
-            // Redirect to a confirmation page or another action method
+            // Redirect to the confirmation page
             return RedirectToAction("OrderConfirmation");
         }
+
 
         // tabel.Orders. Add(Order)    another save changes 
         //HttpContext.Session.Remove(CartSession)
@@ -178,6 +180,13 @@ namespace Intex.Controllers
         {
             return View();
         }
+        public IActionResult OrderConfirmation()
+        {
+            return View();
+
+        }
+
+
 
         public IActionResult ProductDetails(int productId)
         {
@@ -386,19 +395,19 @@ namespace Intex.Controllers
             }
             return View(product);
         }
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> ListUsers()
-        {
-            var users = _userManager.Users.Select(user => new UserRolesViewModel
-            {
-                UserId = user.Id,
-                UserName = user.UserName,
-                Email = user.Email,
-                Roles = _userManager.GetRolesAsync(user).Result  // Synchronous call for simplicity, better to use async in real applications
-            }).ToList();
+        //[Authorize(Roles = "Admin")]
+        //public async Task<IActionResult> ListUsers()
+        //{
+        //    var users = _userManager.Users.Select(user => new UserRolesViewModel
+        //    {
+        //        UserId = user.Id,
+        //        UserName = user.UserName,
+        //        Email = user.Email,
+        //        Roles = _userManager.GetRolesAsync(user).Result  // Synchronous call for simplicity, better to use async in real applications
+        //    }).ToList();
 
-            return View(users);
-        }
+        //    return View(users);
+        //}
 
 
         // Displays the delete confirmation page

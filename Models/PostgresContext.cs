@@ -199,10 +199,10 @@ public partial class PostgresContext : DbContext
             entity.Property(e => e.ProductId).HasColumnName("product_ID");
             entity.Property(e => e.SecondaryColor).HasColumnName("secondary_color");
             entity.Property(e => e.Year).HasColumnName("year");
+      
+
         });
-
- 
-
+       
         OnModelCreatingPartial(modelBuilder);
     }
 
