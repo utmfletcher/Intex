@@ -22,14 +22,27 @@
 <div class="container mt-3">
     @* Products *@
     <div class="row">
-        @foreach (Top20ViewModel p in Model.Top20ViewModels)
+        @if (User.IsInRole("User"))
         {
-            <div class="col-3 mb-4">
-                <partial name="Top20ProductSummary" model="p" />
-            </div>
+            @foreach (User6ViewModel p in Model.User6ViewModels)
+            {
+                <div class="col-3 mb-4">
+                    <partial name="User6ProductSummary" model="p" />
+                </div>
+            }
+        }
+        else
+        {
+            @foreach (Top20ViewModel p in Model.Top20ViewModels)
+            {
+                <div class="col-3 mb-4">
+                    <partial name="Top20ProductSummary" model="p" />
+                </div>
+            }
         }
     </div>
 </div>
+
 
 <div style="display: flex; justify-content: center; align-items: center; flex-direction: column;">
     <p>Explore more on our Products page</p>

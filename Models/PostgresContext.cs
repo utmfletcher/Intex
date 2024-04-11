@@ -44,6 +44,9 @@ public partial class PostgresContext : DbContext
 
     public virtual DbSet<top_20_product> top_20_products { get; set; }  
 
+    public virtual DbSet<ItemReccomendation> ItemReccomendations { get; set; }
+    public virtual DbSet<User6Product> User6Products { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseNpgsql("Name=ConnectionStrings:PostgresConnection");
 
