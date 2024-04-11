@@ -85,7 +85,7 @@ namespace Intex.Controllers
 
         public IActionResult ProductDetails(int productId)
         {
-            productId = 1;
+            
 
             var selectedProduct = _repo.CleanProducts
                 .Where(p => p.product_id == productId)
