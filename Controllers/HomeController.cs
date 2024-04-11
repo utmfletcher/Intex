@@ -25,56 +25,50 @@ namespace Intex.Controllers
             _repo = temp;
         }
 
-        public IActionResult Index(int pageNum, string? productType)
+        public IActionResult Index()
         {
 
 
 
-            int pageSize = 5;
-            pageNum = Math.Max(1, pageNum); // Ensure pageNum is at least 1
+            int pageSize = 20;
+         
 
-            // Using LINQ method syntax to join and filter data
-            var query = _repo.CleanProducts
-                .Join(_repo.ProductCategories,
-                      product => product.product_id,
-                      productCategory => productCategory.p_id,
-                      (product, productCategory) => new { product, productCategory })
-                .Join(_repo.Categories,
-                      combined => combined.productCategory.c_id,
-                      category => category.category_id,
-                      (combined, category) => new { combined.product, CategoryName = category.name })
-                .GroupBy(combined => combined.product)
-                .Select(grouped => new CleanProductViewModel
+            var query = _repo.Products
+                .Join(_repo.top_20_products,
+                      product => product.ProductId,
+                      top_20_product => top_20_product.product_ID,
+                      (product, top_20_product) => new { product, top_20_product })
+                .Select(joinedItem => new Top20ViewModel
                 {
-                    ProductId = grouped.Key.product_id,
-                    Name = grouped.Key.name,
-                    Year = grouped.Key.year,
-                    NumParts = grouped.Key.num_parts,
-                    Price = grouped.Key.price,
-                    ImgLink = grouped.Key.img_link,
-                    PrimaryColor = grouped.Key.primary_color,
-                    SecondaryColor = grouped.Key.secondary_color,
-                    Description = grouped.Key.description,
-                    CategoryNames = grouped.Select(g => g.CategoryName).ToList()
-                });
+                    ProductId = joinedItem.product.ProductId,
+                    Name = joinedItem.product.Name,
+                    Year = joinedItem.product.Year,
+                    NumParts = joinedItem.product.NumParts,
+                    Price = joinedItem.product.Price,
+                    ImgLink = joinedItem.product.ImgLink,
+                    PrimaryColor = joinedItem.product.PrimaryColor,
+                    SecondaryColor = joinedItem.product.SecondaryColor,
+                    Description = joinedItem.product.Description,
+                    Category = joinedItem.product.Category,
+                    Rating = joinedItem.top_20_product.combined_score
+                })
+                .OrderByDescending(joinedItem => joinedItem.Rating);
 
             var totalItems = query.Count();
 
             var products = query
-                .Skip((pageNum - 1) * pageSize)
                 .Take(pageSize)
                 .ToList(); // Materialize the query to execute it
 
-            var setup = new ProductListViewModel
+            var setup = new Top20ListViewModel
             {
-                CleanProducts = products,
+                Top20ViewModels = products,
                 PaginationInfo = new PaginationInfo
                 {
-                    CurrentPage = pageNum,
                     ItemsPerPage = pageSize,
                     TotalItems = totalItems
                 },
-                CurrentProductType = productType
+                
             };
 
             // Pass the viewModel to the "ProductDisplay" view
