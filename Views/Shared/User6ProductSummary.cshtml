@@ -1,0 +1,25 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model Intex.Models.ViewModels.User6ViewModel
+
+<div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;">
+    <!-- Repeat this block for each product -->
+    <div class="card" style="background-color: #2A2A31; color: white; width: 200px; border-radius: 20px; overflow: hidden; display: flex; flex-direction: column;">
+        <div style="height: 150px; width: 100%; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+            <a href="/ProductDetails/@Model.ProductId">
+                <img src="@Model.ImgLink" alt="@Model.Name" style="max-height: 100%; max-width: 100%;" />
+            </a>
+        </div>
+        <div class="card-body" style="text-align: center; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between;">
+            <h5 class="card-title" style="margin-top: 10px; font-size: 1em;">@Model.Name</h5>
+            <p class="card-text" style="font-size: 1.2em; font-weight: bold; margin-bottom: 10px;">$@Model.Price</p>
+        </div>
+    </div>
+    <!-- End of product block -->
+</div>
+
+
+

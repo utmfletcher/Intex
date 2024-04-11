@@ -12,6 +12,11 @@
         public IQueryable<ProductCategoryClean> ProductCategories { get; }
 
         public IQueryable<top_20_product> top_20_products  { get; }
+
+        public IQueryable<ItemReccomendation> ItemReccomendations { get; }
+
+        public IQueryable<User6Product> User6Products { get; }
+
         void DeleteCleanProduct(CleanProduct product);
         void AddCleanProduct(CleanProduct product);
 

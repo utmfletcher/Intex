@@ -8,6 +8,8 @@ namespace Intex.Models.ViewModels
         public IEnumerable<CleanProductViewModel> CleanProducts { get; set; } = new List<CleanProductViewModel>();
         public IEnumerable<Top20ViewModel> Top20ViewModels { get; set; } = new List<Top20ViewModel>();
 
+        public IEnumerable<ItemRecommendationViewModel> ItemReccomendations { get; set; } = new List<ItemRecommendationViewModel>();
+
         public PaginationInfo PaginationInfo { get; set; } = new PaginationInfo();
 
         public string? CurrentProductType { get; set; }

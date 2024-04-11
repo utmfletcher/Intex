@@ -25,7 +25,7 @@ namespace Intex
 
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-            builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true) // lina change this to false
+            builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true) 
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services.AddControllersWithViews();
@@ -131,18 +131,18 @@ namespace Intex
                 string email = "admin@admin.com";
                 string password = "Legoisfun1975!";
 
-                if(await userManager.FindByEmailAsync(email)== null)
-                {
-                    var user = new IdentityUser();
-                    user.UserName = email;
-                    user.Email = email;
-                    user.EmailConfirmed = true;
+                //if(await userManager.FindByEmailAsync(email)== null)
+                //{
+                //    var user = new IdentityUser();
+                //    user.UserName = email;
+                //    user.Email = email;
+                //    user.EmailConfirmed = true;
 
-                    await userManager.CreateAsync(user, password);
+                //    await userManager.CreateAsync(user, password);
 
-                    await userManager.AddToRoleAsync(user, "Admin");
+                //    await userManager.AddToRoleAsync(user, "Admin");
 
-                }
+                //}
 
                 
             }

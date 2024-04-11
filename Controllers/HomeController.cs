@@ -28,8 +28,32 @@ namespace Intex.Controllers
         public IActionResult Index()
         {
             int pageSize = 20;
-         
 
+            // User 6 Query 
+            var UserQuery = _repo.Products
+                .Join(_repo.User6Products,
+                      product => product.ProductId,
+                      User6Product => User6Product.product_ID,
+                      (product, User6Product) => new { product, User6Product })
+                .Select(joinedItem => new User6ViewModel
+                {
+                    ProductId = joinedItem.product.ProductId,
+                    Name = joinedItem.User6Product.RecommendedLEGOName,
+                    Year = joinedItem.product.Year,
+                    NumParts = joinedItem.product.NumParts,
+                    Price = joinedItem.product.Price,
+                    ImgLink = joinedItem.product.ImgLink,
+                    PrimaryColor = joinedItem.product.PrimaryColor,
+                    SecondaryColor = joinedItem.product.SecondaryColor,
+                    Description = joinedItem.product.Description,
+                    Category = joinedItem.product.Category
+                });
+
+            var userProducts = UserQuery
+                .Take(pageSize)
+                .ToList(); // Materialize the query to execute it
+
+            // Top 20 Query 
             var query = _repo.Products
                 .Join(_repo.top_20_products,
                       product => product.ProductId,
@@ -51,7 +75,6 @@ namespace Intex.Controllers
                 })
                 .OrderByDescending(joinedItem => joinedItem.Rating);
 
-            var totalItems = query.Count();
 
             var products = query
                 .Take(pageSize)
@@ -60,12 +83,8 @@ namespace Intex.Controllers
             var setup = new Top20ListViewModel
             {
                 Top20ViewModels = products,
-                PaginationInfo = new PaginationInfo
-                {
-                    ItemsPerPage = pageSize,
-                    TotalItems = totalItems
-                },
-                
+                User6ViewModels = userProducts
+
             };
 
             // Pass the viewModel to the "ProductDisplay" view
@@ -143,12 +162,53 @@ namespace Intex.Controllers
                 .Take(pageSize)
                 .ToList(); // Materialize the query to execute it
 
+            // third Query 
+            // Fetch the item recommendations from the database and then process them in-memory
+            var recommendationData = _repo.ItemReccomendations
+                .Where(pr => pr.product_ID == productId)
+                .AsEnumerable() // Switch to LINQ to Objects for in-memory processing
+                .SelectMany(pr => new List<ItemRecommendationViewModel> {
+            new ItemRecommendationViewModel {
+                RecommendationId = pr.Recommendation_ID_1,
+                Name = pr.Recommendation_Name_1,
+                ImgLink = pr.Recommendation_ImgLink_1,
+                Price = pr.Recommendation_Price_1
+            },
+            new ItemRecommendationViewModel {
+                RecommendationId = pr.Recommendation_ID_2,
+                Name = pr.Recommendation_Name_2,
+                ImgLink = pr.Recommendation_ImgLink_2,
+                Price = pr.Recommendation_Price_2
+            },
+            new ItemRecommendationViewModel {
+                RecommendationId = pr.Recommendation_ID_3,
+                Name = pr.Recommendation_Name_3,
+                ImgLink = pr.Recommendation_ImgLink_3,
+                Price = pr.Recommendation_Price_3
+            },
+            new ItemRecommendationViewModel {
+                RecommendationId = pr.Recommendation_ID_4,
+                Name = pr.Recommendation_Name_4,
+                ImgLink = pr.Recommendation_ImgLink_4,
+                Price = pr.Recommendation_Price_4
+            },
+            new ItemRecommendationViewModel {
+                RecommendationId = pr.Recommendation_ID_5,
+                Name = pr.Recommendation_Name_5,
+                ImgLink = pr.Recommendation_ImgLink_5,
+                Price = pr.Recommendation_Price_5
+            }
+            // Add other recommendations as necessary
+                    })
+                    .ToList();
+
 
             var setup = new ProductListViewModel
             {
                 Top20ViewModels = products,
                 CleanProducts = new List<CleanProductViewModel> { selectedProduct },
-                img_link = selectedProduct.ImgLink
+                img_link = selectedProduct.ImgLink,
+                ItemReccomendations = recommendationData
                 // Initialize other necessary properties of ProductListViewModel if there are any
             };
 
@@ -158,40 +218,6 @@ namespace Intex.Controllers
 
 
 
-        //public IActionResult ProductDisplay(int pageNum, string? productType)    
-        //{
-        //    int pageSize = 5;
-        //    var setup = new ProductListViewModel
-        //    {
-        //        Products = _repo.Products
-        //        .Where(x => x.Category == productType || productType == null)
-        //        .OrderBy(x => x.Name)
-        //        .Skip(pageSize * (pageNum - 1))
-        //        .Take(pageSize),
-
-        //        PaginationInfo = new PaginationInfo
-        //        {
-        //            CurrentPage = pageNum,
-        //            ItemsPerPage = pageSize,
-        //            TotalItems = productType == null ? _repo.Products.Count() : _repo.Products.Where(x => x.Category == productType).Count()
-        //        },
-
-        //        CurrentProductType = productType
-        //    };
-
-
-        //    // Pass the viewModel to the "ProductDisplay" view
-        //    return View(setup);
-        //}
-        // FUTURE ADMIN PAGE
-        //[Authorize(Roles = "Admin")]
-        //public IActionResult AdminDashboard()
-        //{
-        //    // Logic to gather data for the admin dashboard
-        //    // This might involve querying databases, preparing view models, etc.
-
-        //    return View();
-        //}
         [Authorize(Roles = "Admin")]
         public IActionResult AdminDashboard()
         {
@@ -283,6 +309,20 @@ namespace Intex.Controllers
             }
             return View(product);
         }
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> ListUsers()
+        {
+            var users = _userManager.Users.Select(user => new UserRolesViewModel
+            {
+                UserId = user.Id,
+                UserName = user.UserName,
+                Email = user.Email,
+                Roles = _userManager.GetRolesAsync(user).Result  // Synchronous call for simplicity, better to use async in real applications
+            }).ToList();
+
+            return View(users);
+        }
+
 
         // Displays the delete confirmation page
         [HttpGet]
