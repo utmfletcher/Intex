@@ -120,9 +120,9 @@ namespace Intex.Controllers
         //    return View(setup);
         //}
 
-        public IActionResult ProductDisplay(int pageNum, string? productType, int pageSize)
+        public IActionResult ProductDisplay(int pageNum,  int pageSize, string? productType)
         {
-            pageSize = pageSize;
+            //pageSize = 10;
 
             pageNum = Math.Max(1, pageNum); // Ensure pageNum is at least 1
 
