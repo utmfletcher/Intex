@@ -85,6 +85,7 @@ namespace Intex.Controllers
         {
             return View();
         }
+
         public IActionResult ProductDetails(int productId)
         {
             productId = 1;
