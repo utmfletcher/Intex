@@ -17,6 +17,6 @@ namespace Intex.Models
 
         public IQueryable<ProductCategoryClean> ProductCategories => _context.ProductCategories;
 
-
+        public IQueryable<top_20_product> top_20_products => _context.top_20_products;
     }
 }
