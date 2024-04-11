@@ -6,7 +6,7 @@ namespace Intex.Models
     {
         //we can  store list of lines. each line has  cartLine class information
         public List<Cartline> Lines { get; set; } = new List<Cartline>();
-        public void AddItem(Product prod, int quantity) // when we choose to add we pass quantitiy and product
+        public virtual void AddItem(Product prod, int quantity) // when we choose to add we pass quantitiy and product
         {
             //pass product that contains product id and then get first or default
             Cartline? line = Lines  // build instance  and find in array where it equals product id 
@@ -31,9 +31,9 @@ namespace Intex.Models
             }
         }
         //remove product where produc id is equal to passed in product
-        public void RemoveLine(Product prod)=>Lines.RemoveAll(x=>x.Product.ProductId == prod.ProductId);
+        public virtual void RemoveLine(Product prod)=>Lines.RemoveAll(x=>x.Product.ProductId == prod.ProductId);
        //add ability to clear cart
-        public void Clear()=> Lines.Clear();
+        public virtual void Clear()=> Lines.Clear();
         //PRICE CALCULATOR 
         public int? CalculateTotal() => Lines.Sum(line => line.Quantity * line.Product.Price);
         public class Cartline
