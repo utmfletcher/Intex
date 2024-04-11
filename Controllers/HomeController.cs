@@ -28,8 +28,32 @@ namespace Intex.Controllers
         public IActionResult Index()
         {
             int pageSize = 20;
-         
 
+            // User 6 Query 
+            var UserQuery = _repo.Products
+                .Join(_repo.User6Products,
+                      product => product.ProductId,
+                      User6Product => User6Product.product_ID,
+                      (product, User6Product) => new { product, User6Product })
+                .Select(joinedItem => new User6ViewModel
+                {
+                    ProductId = joinedItem.product.ProductId,
+                    Name = joinedItem.User6Product.RecommendedLEGOName,
+                    Year = joinedItem.product.Year,
+                    NumParts = joinedItem.product.NumParts,
+                    Price = joinedItem.product.Price,
+                    ImgLink = joinedItem.product.ImgLink,
+                    PrimaryColor = joinedItem.product.PrimaryColor,
+                    SecondaryColor = joinedItem.product.SecondaryColor,
+                    Description = joinedItem.product.Description,
+                    Category = joinedItem.product.Category
+                });
+
+            var userProducts = UserQuery
+                .Take(pageSize)
+                .ToList(); // Materialize the query to execute it
+
+            // Top 20 Query 
             var query = _repo.Products
                 .Join(_repo.top_20_products,
                       product => product.ProductId,
@@ -51,7 +75,6 @@ namespace Intex.Controllers
                 })
                 .OrderByDescending(joinedItem => joinedItem.Rating);
 
-            var totalItems = query.Count();
 
             var products = query
                 .Take(pageSize)
@@ -60,12 +83,8 @@ namespace Intex.Controllers
             var setup = new Top20ListViewModel
             {
                 Top20ViewModels = products,
-                PaginationInfo = new PaginationInfo
-                {
-                    ItemsPerPage = pageSize,
-                    TotalItems = totalItems
-                },
-                
+                User6ViewModels = userProducts
+
             };
 
             // Pass the viewModel to the "ProductDisplay" view
@@ -199,40 +218,6 @@ namespace Intex.Controllers
 
 
 
-        //public IActionResult ProductDisplay(int pageNum, string? productType)    
-        //{
-        //    int pageSize = 5;
-        //    var setup = new ProductListViewModel
-        //    {
-        //        Products = _repo.Products
-        //        .Where(x => x.Category == productType || productType == null)
-        //        .OrderBy(x => x.Name)
-        //        .Skip(pageSize * (pageNum - 1))
-        //        .Take(pageSize),
-
-        //        PaginationInfo = new PaginationInfo
-        //        {
-        //            CurrentPage = pageNum,
-        //            ItemsPerPage = pageSize,
-        //            TotalItems = productType == null ? _repo.Products.Count() : _repo.Products.Where(x => x.Category == productType).Count()
-        //        },
-
-        //        CurrentProductType = productType
-        //    };
-
-
-        //    // Pass the viewModel to the "ProductDisplay" view
-        //    return View(setup);
-        //}
-        // FUTURE ADMIN PAGE
-        //[Authorize(Roles = "Admin")]
-        //public IActionResult AdminDashboard()
-        //{
-        //    // Logic to gather data for the admin dashboard
-        //    // This might involve querying databases, preparing view models, etc.
-
-        //    return View();
-        //}
         [Authorize(Roles = "Admin")]
         public IActionResult AdminDashboard()
         {
