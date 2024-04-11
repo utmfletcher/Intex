@@ -23,6 +23,7 @@ namespace Intex
 
             builder.Services.AddScoped<IProductRepository, EFProductRepository>();
 
+
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
             builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true) 
