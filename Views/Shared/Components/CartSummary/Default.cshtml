@@ -1,0 +1,22 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+@model Cart
+<div class="">
+    @if (Model.Lines != null && Model.Lines.Count > 0)
+    {
+        <small class="navbar-text">
+            <b>Your Cart: </b>
+            @Model.Lines.Sum(x => x.Quantity) Item(s)
+            @($"{Model.CalculateTotal():c}")
+        </small>
+    }
+    
+    <a class="btn btn-sm btn-secondary navbar-btn" asp-page="/Cart"
+    asp-route-returnUrl="@ViewContext.HttpContext.Request.PathAndQuery()">
+        <i class="fa fa-shopping-cart"></i>
+</a>
+</div>
