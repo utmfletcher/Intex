@@ -164,12 +164,13 @@ namespace Intex.Controllers
         [Authorize(Roles = "Admin")]
         public IActionResult AdminDashboard()
         {
-            // Retrieve all CleanProducts using LINQ.
-            var cleanProductsList = _repo.CleanProducts.ToList();
+            // Retrieve all CleanProducts using LINQ, ordered by product_id in ascending order.
+            var cleanProductsList = _repo.CleanProducts.OrderBy(p => p.product_id).ToList();
 
-            // Pass the list of products to the view.
+            // Pass the sorted list of products to the view.
             return View(cleanProductsList);
         }
+
 
         public IActionResult ProductDisplay(int pageNum,  int pageSize, string? productType)
         {
@@ -229,6 +230,78 @@ namespace Intex.Controllers
             };
 
             return View(setup);
+        }
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public IActionResult EditProduct(int id)
+        {
+            var product = _repo.CleanProducts.FirstOrDefault(p => p.product_id == id);
+            if (product == null) return NotFound();
+            return View(product);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public IActionResult EditProduct(CleanProduct product)
+        {
+            if (ModelState.IsValid)
+            {
+                _repo.UpdateCleanProduct(product);
+                _repo.SaveChanges();
+                return RedirectToAction(nameof(AdminDashboard));
+            }
+            return View(product);
+        }
+
+        // Displays the delete confirmation page
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public IActionResult DeleteProduct(int id)
+        {
+            var product = _repo.CleanProducts.FirstOrDefault(p => p.product_id == id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            return View("DeleteConfirmation", product);
+        }
+
+        // Processes the deletion of a product
+        [HttpPost, ActionName("DeleteProduct")]
+        [Authorize(Roles = "Admin")]
+        public IActionResult DeleteProductConfirmed(int id)
+        {
+            var product = _repo.CleanProducts.FirstOrDefault(p => p.product_id == id);
+            if (product != null)
+            {
+                _repo.DeleteCleanProduct(product); // Assume your repository has this method
+                _repo.SaveChanges();
+            }
+
+            return RedirectToAction(nameof(AdminDashboard));
+        }
+        // Display the form for adding a new product
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public IActionResult CreateProduct()
+        {
+            return View("CreateProduct", new CleanProduct()); // Pass a new product to the view
+        }
+
+        // Process the form submission for a new product
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public IActionResult CreateProduct(CleanProduct product)
+        {
+            if (ModelState.IsValid)
+            {
+                _repo.AddCleanProduct(product); // Add the product to the database
+                _repo.SaveChanges(); // Save the changes
+                return RedirectToAction(nameof(AdminDashboard)); // Redirect to the dashboard
+            }
+
+            return View(product); // If invalid, show the form again with validation messages
         }
 
 
