@@ -13,7 +13,6 @@
         IQueryable<Order> Orders { get; }
 
 
-
         public IQueryable<Lineitem> Lineitems { get; }
 
         public IQueryable<Customer> Customers { get; }
