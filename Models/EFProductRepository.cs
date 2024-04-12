@@ -7,11 +7,11 @@ namespace Intex.Models
 {
     public class EFProductRepository : IProductRepository
     {
-        private PostgresContext _context;
+        private readonly PostgresContext _context;
 
-        public EFProductRepository(PostgresContext temp)
+        public EFProductRepository(PostgresContext context)
         {
-            _context = temp;
+            _context = context;
         }
 
         public IQueryable<Product> Products => _context.Products;
@@ -30,7 +30,6 @@ namespace Intex.Models
 
         public IQueryable<Order> Orders => _context.Orders;
 
-        //object IProductRepository.Orders => throw new NotImplementedException();
 
         public void UpdateCleanProduct(CleanProduct product)
         {
@@ -45,6 +44,11 @@ namespace Intex.Models
         public void AddCleanProduct(CleanProduct product)
         {
             _context.CleanProducts.Add(product);
+        }
+
+        public void AddCategoryToProduct(ProductCategoryClean productCategory)
+        {
+            _context.ProductCategories.Add(productCategory);
         }
 
         public void AddOrder(Order order)

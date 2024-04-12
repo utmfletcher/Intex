@@ -13,6 +13,7 @@ using System.Drawing.Printing;
 using Microsoft.AspNetCore.Identity;
 
 
+
 namespace Intex.Controllers
 {
 
@@ -133,7 +134,7 @@ namespace Intex.Controllers
             }
             return View(cart);
         }
-
+       
         /*   public async Task<IActionResult> Checkout()
            {
                if(!User.Identity.IsAuthenticated)
@@ -143,8 +144,10 @@ namespace Intex.Controllers
                }
            }*/
         [HttpPost]
+        [Authorize]
         public IActionResult PlaceOrder(string street, string city, string state, string country, string bank, string typeOfCard)
         {
+
             var cart = GetCurrentCart();
             var order = new Order
             {
@@ -496,30 +499,43 @@ namespace Intex.Controllers
 
             return RedirectToAction(nameof(AdminDashboard));
         }
-        // Display the form for adding a new product
+
+
         [HttpGet]
         [Authorize(Roles = "Admin")]
         public IActionResult CreateProduct()
         {
-            return View("CreateProduct", new CleanProduct()); // Pass a new product to the view
+            var viewModel = new CleanProductViewModel();
+            return View(viewModel); // Ensure you're passing CleanProductViewModel instance to the view
         }
 
-        // Process the form submission for a new product
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public IActionResult CreateProduct(CleanProduct product)
+        public IActionResult CreateProduct(CleanProduct response)
         {
-            if (ModelState.IsValid)
-            {
-                _repo.AddCleanProduct(product); // Add the product to the database
-                _repo.SaveChanges(); // Save the changes
-                return RedirectToAction(nameof(AdminDashboard)); // Redirect to the dashboard
-            }
+            // Check if the model state is valid (i.e., if there are no validation errors)
 
-            return View(product); // If invalid, show the form again with validation messages
+            // Add the product to the repository
+            _repo.AddCleanProduct(response);
+
+            _repo.SaveChanges();
+
+            // Redirect to the "OrderConfirmation" action if product creation is successful
+            return RedirectToAction("AdminDashboard");
+
+
+
         }
 
 
+
+        /*[HttpGet]
+        [Authorize(Roles = "Admin")]
+        public IActionResult AdminDashboard()
+        {
+            // Implement admin dashboard logic here
+            return View();
+        }*/
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
