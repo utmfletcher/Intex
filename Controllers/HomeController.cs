@@ -21,7 +21,7 @@ namespace Intex.Controllers
         // Services are declared here
         private readonly UserManager<IdentityUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly IProductRepository _repo;  // Your existing product repository
+     
 
        // private readonly ILogger<HomeController> _logger;
 

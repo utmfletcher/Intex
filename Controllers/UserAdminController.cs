@@ -36,6 +36,7 @@ public class UserAdminController : Controller
         ViewData["Roles"] = _roleManager.Roles.Select(r => r.Name).ToList();
         return View(userRolesViewModel);
     }
+    [Authorize(Roles = "Admin")]
     [HttpGet]
     public IActionResult ListUsers()
     {
