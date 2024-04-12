@@ -7,22 +7,24 @@ using Microsoft.Build.Construction;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using System.Drawing.Printing;
+using Microsoft.AspNetCore.Identity;
 
 namespace Intex.Controllers
 {
+
     public class HomeController : Controller
     {
-       // private readonly ILogger<HomeController> _logger;
+        // Services are declared here
+        private readonly UserManager<IdentityUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IProductRepository _repo;  // Your existing product repository
 
-        private IProductRepository _repo;
-
-       /* public HomeController(ILogger<HomeController> logger)
+        // Constructor uses dependency injection to populate the services
+        public HomeController(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, IProductRepository repo)
         {
-            _logger = logger;
-        }*/
-       public HomeController(IProductRepository temp)
-        {
-            _repo = temp;
+            _userManager = userManager;
+            _roleManager = roleManager;
+            _repo = repo;
         }
 
         public IActionResult Index()
@@ -288,14 +290,49 @@ namespace Intex.Controllers
 
             return View(setup);
         }
-        [HttpGet]
-        [Authorize(Roles = "Admin")]
-        public IActionResult EditProduct(int id)
-        {
-            var product = _repo.CleanProducts.FirstOrDefault(p => p.product_id == id);
-            if (product == null) return NotFound();
-            return View(product);
-        }
+
+
+
+
+        //[Authorize(Roles = "Admin")]
+        //public async Task<IActionResult> ListUsers()
+        //{
+        //    var users = _userManager.Users.ToList();
+        //    var userRolesViewModel = new List<UserRolesViewModel>();
+
+        //    foreach (var user in users)
+        //    {
+        //        var thisViewModel = new UserRolesViewModel
+        //        {
+        //            UserId = user.Id,
+        //            UserName = user.UserName,
+        //            Email = user.Email,
+        //            Roles = await _userManager.GetRolesAsync(user)
+        //        };
+        //        userRolesViewModel.Add(thisViewModel);
+        //    }
+
+        //    return View(userRolesViewModel);
+        //}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
