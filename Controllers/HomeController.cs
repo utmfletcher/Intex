@@ -130,6 +130,7 @@ namespace Intex.Controllers
             }
             return cart;
         }
+        [Authorize]
         public IActionResult Checkout()
         {
             var cart = GetCurrentCart();
@@ -187,6 +188,11 @@ namespace Intex.Controllers
         //HttpContext.Session.Remove(CartSession)
         //return View(page, order)
         public IActionResult Privacy()
+        {
+            return View();
+        }
+
+        public IActionResult AboutUs()
         {
             return View();
         }
