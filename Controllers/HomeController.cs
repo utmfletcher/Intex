@@ -13,6 +13,7 @@ using System.Drawing.Printing;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.ML.OnnxRuntime;
 using Microsoft.ML.OnnxRuntime.Tensors;
+using System.Globalization;
 
 
 
@@ -32,6 +33,7 @@ namespace Intex.Controllers
         private const string Key = "Cart";
         private readonly string _onnxModelPath;
         private readonly InferenceSession _session;
+        private Customer _customer;
 
         // Constructor uses dependency injection to populate the services
         public HomeController(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, IProductRepository repo)
@@ -156,6 +158,9 @@ namespace Intex.Controllers
         {
 
             var cart = GetCurrentCart();
+            var lineItems = _repo.Lineitems;
+            var products = _repo.Products;
+            var customers = _repo.Customers;
             var order = new Order
             {
                 TransactionId = new Random().Next(100000, 999999),
@@ -175,12 +180,85 @@ namespace Intex.Controllers
 
             _repo.AddOrder(order); // Add the order to the repository
             _repo.SaveChanges();
+            var class_type_dict = new Dictionary<int, string>
+            {
+                { 0, "Not Fraud" },
+                { 1, "Fraud" }
+            };
 
+            MinMaxScaler timeScaler = new MinMaxScaler(-2.83, 24);
+            MinMaxScaler amountScaler = new MinMaxScaler(5, 400);
+            MinMaxScaler totalValueScaler = new MinMaxScaler(1, 390);
+            MinMaxScaler ageScaler = new MinMaxScaler(16.8, 76.9);
+            MinMaxScaler dayOfMonth = new MinMaxScaler(0, 31);
+            MinMaxScaler monthOfYear = new MinMaxScaler(1, 12);
+            var input = new List<float>
+            {
+                (float)timeScaler.Scale((double)order.Time!),
+                (float)amountScaler.Scale((double)order.Amount!),
+                (float)totalValueScaler.Scale(CalculateTotalValue(order.TransactionId, lineItems, products)),
+                //(float)ageScaler.Scale((double)customers.Where(c => c.CustomerId == order.CustomerId).Select(c => c.Age).SingleOrDefault()),
+                (float)ageScaler.Scale(46.85),
+                (float)dayOfMonth.Scale(DateTime.Parse(order.Date!).Day),
+                (float)monthOfYear.Scale(DateTime.Parse(order.Date!).Month),
+                order.DayOfWeek == "Monday" ? (float)1.0 : (float)0.0,
+                order.DayOfWeek == "Saturday" ? (float)1.0 : (float)0.0,
+                order.DayOfWeek == "Sunday" ? (float)1.0 : (float)0.0,
+                order.DayOfWeek == "Thursday" ? (float)1.0 : (float)0.0,
+                order.DayOfWeek == "Tuesday" ? (float)1.0 : (float)0.0,
+                order.DayOfWeek == "Wednesday" ? (float)1.0 : (float)0.0,
+                order.EntryMode == "PIN" ? (float)1.0 : (float)0.0,
+                order.EntryMode == "Tap" ? (float)1.0 : (float)0.0,
+                order.TypeOfTransaction == "Online" ? (float)1.0 : (float)0.0,
+                order.TypeOfTransaction == "POS" ? (float)1.0 : (float)0.0,
+                order.CountryOfTransaction == "India" ? (float)1.0 : (float)0.0,
+                order.CountryOfTransaction == "Russia" ? (float)1.0 : (float)0.0,
+                order.CountryOfTransaction == "USA" ? (float)1.0 : (float)0.0,
+                order.CountryOfTransaction == "United Kingdom" ? (float)1.0 : (float)0.0,
+                order.ShippingAddress == "India" ? (float)1.0 : (float)0.0,
+                order.ShippingAddress == "Russia" ? (float)1.0 : (float)0.0,
+                order.ShippingAddress == "USA" ? (float)1.0 : (float)0.0,
+                order.ShippingAddress == "United Kingdom" ? (float)1.0 : (float)0.0,
+                order.Bank == "HSBC" ? (float)1.0 : (float)0.0,
+                order.Bank == "Halifax" ? (float)1.0 : (float)0.0,
+                order.Bank == "Lloyds" ? (float)1.0 : (float)0.0,
+                order.Bank == "Metro" ? (float)1.0 : (float)0.0,
+                order.Bank == "Monzo" ? (float)1.0 : (float)0.0,
+                order.Bank == "RBS" ? (float)1.0 : (float)0.0,
+                order.TypeOfCard == "Visa" ? (float)1.0 : (float)0.0,
+                customers.Where(c => c.CustomerId == order.CustomerId).Select(c => c.CountryOfResidence).SingleOrDefault()! == "Russia" ? (float)1.0 : (float)0.0,
+                customers.Where(c => c.CustomerId == order.CustomerId).Select(c => c.CountryOfResidence).SingleOrDefault()! == "United Kingdom" ? (float)1.0 : (float)0.0,
+                customers.Where(c => c.CustomerId == order.CustomerId).Select(c => c.Gender).SingleOrDefault()! == "M" ? (float)1.0 : (float)0.0,
+                (float)1
+            };
+            var inputTensor = new DenseTensor<float>(input.ToArray(), new[] { 1, input.Count });
+
+            var inputs = new List<NamedOnnxValue>
+                {
+                    NamedOnnxValue.CreateFromTensor("float_input", inputTensor)
+                };
+
+            string predictionResult;
+            using (var results = _session.Run(inputs))
+            {
+                var prediction = results.FirstOrDefault(item => item.Name == "output_label")?.AsTensor<long>().ToArray();
+                predictionResult = prediction != null && prediction.Length > 0 ? class_type_dict.GetValueOrDefault((int)prediction[0], "Unknown") : "Error in prediction";
+            }
+
+            OrderPrediction result = (new OrderPrediction { Orders = order, Prediction = predictionResult });
+
+            if (result.Prediction == "Not Fraud")
+            {
+                return RedirectToAction("OrderConfirmation");
+            } else
+            {
+                return RedirectToAction("ReviewOrder");
+            }
             // Optionally, you can remove the cart from the session here
             // HttpContext.Session.Remove("Cart");
 
             // Redirect to the confirmation page
-            return RedirectToAction("OrderConfirmation");
+            
         }
 
 
@@ -206,6 +284,11 @@ namespace Intex.Controllers
         {
             return View();
 
+        }
+
+        public IActionResult ReviewOrder()
+        {
+            return View();
         }
 
 
@@ -444,11 +527,23 @@ namespace Intex.Controllers
         {
             var products = _repo.Products;
             var lineItems = _repo.Lineitems;
-            var orders = _repo.Orders.OrderBy(o => o.Date).Take(20).ToList();
+            var size = _repo.Orders.ToList().Count;
+            //var orders = _repo.Orders.OrderBy(o => o.Date).Take(20).ToList();
+            var today = DateTime.Now;
+            var sortedOrders = _repo.Orders
+            .AsEnumerable()
+            .Select(order => new {
+                Order = order,
+                ParsedDate = ParseDate(order.Date)
+            })
+            .Where(x => x.ParsedDate != null && x.ParsedDate <= today)
+            .OrderByDescending(x => x.ParsedDate)
+            .ThenByDescending(x => x.Order.Time)
+            .Select(x => x.Order)
+            .Take(20)
+            .ToList();
             var customers = _repo.Customers;
-
             var predictions = new List<OrderPrediction>();
-
             var class_type_dict = new Dictionary<int, string>
             {
                 { 0, "Not Fraud" },
@@ -461,14 +556,15 @@ namespace Intex.Controllers
             MinMaxScaler ageScaler = new MinMaxScaler(16.8, 76.9);
             MinMaxScaler dayOfMonth = new MinMaxScaler(0, 31);
             MinMaxScaler monthOfYear = new MinMaxScaler(1, 12);
-            foreach (var order in orders)
+            foreach (var order in sortedOrders)
             {
                 var input = new List<float>
                 {
                     (float)timeScaler.Scale((double)order.Time!),
                     (float)amountScaler.Scale((double)order.Amount!),
                     (float)totalValueScaler.Scale(CalculateTotalValue(order.TransactionId, lineItems, products)),
-                    (float)ageScaler.Scale((double)customers.Where(c => c.CustomerId == order.CustomerId).Select(c => c.Age).SingleOrDefault()!),
+                    //(float)ageScaler.Scale((double)customers.Where(c => c.CustomerId == order.CustomerId).Select(c => c.Age).SingleOrDefault()),
+                    (float)ageScaler.Scale(46.85),
                     (float)dayOfMonth.Scale(DateTime.Parse(order.Date!).Day),
                     (float)monthOfYear.Scale(DateTime.Parse(order.Date!).Month),
                     order.DayOfWeek == "Monday" ? (float)1.0 : (float)0.0,
@@ -533,6 +629,17 @@ namespace Intex.Controllers
                 .Sum(x => x.Price * x.Qty)!;
 
             return totalValue;
+        }
+
+        private static DateTime? ParseDate(string dateString)
+        {
+            DateTime dateValue;
+            string[] formats = { "MM/dd/yyyy", "M/d/yyyy", "MM/d/yyyy", "M/dd/yyyy" };
+            if (DateTime.TryParseExact(dateString, formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out dateValue))
+            {
+                return dateValue;
+            }
+            return null;
         }
 
 

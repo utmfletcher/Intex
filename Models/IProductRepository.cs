@@ -23,6 +23,9 @@
         void DeleteCleanProduct(CleanProduct product);
         void AddCleanProduct(CleanProduct product);
         void AddOrder(Order order);
+        void AddLineItem(Lineitem lineitem);
+
+        void AddCustomer(Customer customer);
         void AddCategoryToProduct(ProductCategoryClean productCategory);
 
         void SaveChanges();
