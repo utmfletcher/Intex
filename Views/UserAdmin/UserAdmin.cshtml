@@ -10,6 +10,8 @@
                 <th>Email</th>
                 <th>Roles</th>
                 <th>Edit Roles</th>
+                <th>Edit User Details</th> <!-- Additional header for editing user details -->
+
             </tr>
         </thead>
         <tbody>
@@ -19,16 +21,18 @@
                     <td>@user.Email</td>
                     <td>@string.Join(", ", user.Roles)</td>
                     <td>
-                        <!-- You might want a form here for editing roles, or a link to a separate edit page -->
                         <form asp-action="UserAdmin" method="post">
                             <input type="hidden" name="userId" value="@user.UserId" />
-                            <!-- Display roles checkboxes or any other inputs you prefer -->
                             @foreach (var role in ViewData["Roles"] as List<string>)
                             {
                                 <input type="checkbox" name="roles" value="@role" @(user.Roles.Contains(role) ? "checked" : "") /> @role
                             }
                             <button type="submit">Update Roles</button>
                         </form>
+                    </td>
+                    <td>
+                        <!-- Link to the EditUser action, passing the user's ID -->
+                        <a asp-action="EditUser" asp-route-id="@user.UserId" class="btn btn-primary">Edit Details</a>
                     </td>
                 </tr>
             }

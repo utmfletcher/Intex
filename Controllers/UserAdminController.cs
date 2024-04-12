@@ -10,6 +10,12 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Intex.Infastructure;
+using SQLitePCL;
+using System.Diagnostics;
+using System.Drawing.Printing;
+using Microsoft.ML.OnnxRuntime;
+using Microsoft.ML.OnnxRuntime.Tensors;
 public class UserAdminController : Controller
 {
     private readonly UserManager<IdentityUser> _userManager;
@@ -69,6 +75,72 @@ public class UserAdminController : Controller
         }
         return RedirectToAction("UserAdmin");
     }
+
+
+
+
+
+    [Authorize(Roles = "Admin")]
+  
+    
+
+        // GET method to edit a user
+        [HttpGet]
+        public async Task<IActionResult> EditUser(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var userRoles = await _userManager.GetRolesAsync(user);
+            var model = new UserRoles // Assuming UserRoles is a suitable ViewModel
+            {
+                UserId = user.Id,
+                Email = user.Email,
+                Roles = userRoles.ToList()
+            };
+
+            return View(model);
+        }
+
+        // POST method to update a user
+        [HttpPost]
+        public async Task<IActionResult> EditUser(UserRoles model)
+        {
+            var user = await _userManager.FindByIdAsync(model.UserId);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            user.Email = model.Email; // Update other fields as necessary
+            var result = await _userManager.UpdateAsync(user);
+            if (!result.Succeeded)
+            {
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+                return View(model);
+            }
+
+            return RedirectToAction(nameof(UserAdmin)); // Redirect to the list of users/admin view
+        
+    }
+
+
+
+
+
+
+
+
+
+
+
+
 }
 
         //[HttpGet]
