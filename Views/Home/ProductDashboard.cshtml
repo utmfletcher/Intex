@@ -1,0 +1,62 @@
+﻿@model IEnumerable<Intex.Models.CleanProduct>
+
+@{
+    ViewData["Title"] = "Product Dashboard";
+}
+
+<h2>Product Dashboard</h2>
+
+
+@if (!Model.Any())
+{
+    <p>No products found.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Product ID</th>
+                <th>Name</th>
+                <th>Year</th>
+                <th>Number of Parts</th>
+                <th>Price</th>
+                <th>Image Link</th>
+                <th>Actions</th> <!-- Column for actions like Edit/Delete -->
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var product in Model)
+            {
+                <tr>
+                    <td>@product.product_id</td>
+                    <td>@product.name</td>
+                    <td>@product.year</td>
+                    <td>@product.num_parts</td>
+                    <td>
+                        @if (product.price.HasValue)
+                        {
+                            @String.Format("{0:C}", product.price)
+                        }
+                    </td>
+                    <td>
+                        @if (!string.IsNullOrWhiteSpace(product.img_link))
+                        {
+                            <img src="@product.img_link" alt="Product Image" style="width:100px; height:auto;" />
+                        }
+                    </td>
+                    <td>
+                        <!-- Edit Button -->
+                        <a href="@Url.Action("EditProduct", "Home", new { id = product.product_id })" class="btn btn-primary">Edit</a>
+
+                      
+                        <a href="@Url.Action("DeleteProduct", "Home", new { id = product.product_id })" class="btn btn-danger">Delete</a>
+
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+}
+<a class="btn btn-outline-secondary" asp-controller="Home" asp-action="CreateProduct">Create Product</a>

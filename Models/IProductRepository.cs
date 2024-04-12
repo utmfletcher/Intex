@@ -12,12 +12,7 @@
         IQueryable<User6Product> User6Products { get; }
         IQueryable<Order> Orders { get; }
 
-        public IQueryable<top_20_product> top_20_products  { get; }
 
-        public IQueryable<ItemReccomendation> ItemReccomendations { get; }
-
-        public IQueryable<User6Product> User6Products { get; }
-        public IQueryable<Order> Orders { get; }
 
         public IQueryable<Lineitem> Lineitems { get; }
 
