@@ -4,42 +4,45 @@
     ViewData["Title"] = "Product Dashboard";
 }
 
-<h2>Product Dashboard</h2>
+<div class="row">
+    <a href="/AdminDashboard">
+        <button style="background-color: #f0f0f0; color: #000; font-size: 16px; padding: 10px 20px; border: none; cursor: pointer; border-radius: 5px; font-weight: bold; font-family: Arial, sans-serif;">
+            &lt; Admin Dashboard
+        </button>
+    </a>
+    <br />
+    <h2 style="color: #333; font-size: 32px; font-family: Arial, sans-serif; text-align: left; margin-left: 20px;">Order Dashboard</h2>
+</div>
 
 
-@if (!Model.Any())
-{
-    <p>No products found.</p>
-}
-else
-{
-    <table class="table">
+<table class="table" style="width: 100%; border-collapse: collapse; margin: 20px 0;">
         <thead>
-            <tr>
+        <tr style="background-color: #f0f0f0; color: black;">
                 <th>Product ID</th>
                 <th>Name</th>
                 <th>Year</th>
                 <th>Number of Parts</th>
                 <th>Price</th>
                 <th>Image Link</th>
-                <th>Actions</th> <!-- Column for actions like Edit/Delete -->
+                <th></th>
+                <th></th><!-- Column for actions like Edit/Delete -->
             </tr>
         </thead>
         <tbody>
             @foreach (var product in Model)
             {
                 <tr>
-                    <td>@product.product_id</td>
-                    <td>@product.name</td>
-                    <td>@product.year</td>
-                    <td>@product.num_parts</td>
-                    <td>
+                <td style ="padding: 8px; border: 1px solid #ddd; text-align: left;">@product.product_id</td>
+                <td style="padding: 8px; border: 1px solid #ddd; text-align: left;">@product.name</td>
+                <td style="padding: 8px; border: 1px solid #ddd; text-align: left;">@product.year</td>
+                <td style="padding: 8px; border: 1px solid #ddd; text-align: left;">@product.num_parts</td>
+                <td style="padding: 8px; border: 1px solid #ddd; text-align: left;">
                         @if (product.price.HasValue)
                         {
                             @String.Format("{0:C}", product.price)
                         }
                     </td>
-                    <td>
+                <td style="padding: 8px; border: 1px solid #ddd; text-align: left;">
                         @if (!string.IsNullOrWhiteSpace(product.img_link))
                         {
                             <img src="@product.img_link" alt="Product Image" style="width:100px; height:auto;" />
@@ -47,16 +50,18 @@ else
                     </td>
                     <td>
                         <!-- Edit Button -->
-                        <a href="@Url.Action("EditProduct", "Home", new { id = product.product_id })" class="btn btn-primary">Edit</a>
-
+                    <a href="@Url.Action("EditProduct", "Home", new { id = product.product_id })" class="btn btn-primary"
+                    style="padding: 5px 10px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 3px;">Edit</a>
+                    </td>
+                    <td>
                       
-                        <a href="@Url.Action("DeleteProduct", "Home", new { id = product.product_id })" class="btn btn-danger">Delete</a>
+                        <a href="@Url.Action("DeleteProduct", "Home", new { id = product.product_id })" class="btn btn-danger"
+                       style="padding: 5px 10px; background-color: #f44336; color: white; text-decoration: none; border-radius: 3px; margin-left: 5px;">Delete</a>
 
                     </td>
                 </tr>
             }
         </tbody>
     </table>
-
-}
 <a class="btn btn-outline-secondary" asp-controller="Home" asp-action="CreateProduct">Create Product</a>
+
