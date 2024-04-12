@@ -61,6 +61,16 @@ namespace Intex.Models
             _context.Orders.Add(order);
         }
 
+        public void AddLineItem(Lineitem lineitem)
+        {
+            _context.Lineitems.Add(lineitem);
+        }
+
+        public void AddCustomer(Customer customer)
+        {
+            _context.Customers.Add(customer);
+        }
+
         public void SaveChanges()
         {
             _context.SaveChanges();

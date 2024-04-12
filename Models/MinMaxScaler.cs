@@ -13,9 +13,13 @@
         }
 
         // Method to scale a value
-        public double Scale(double value)
+        public double Scale(double? value)
         {
-            return (value - min) / (max - min);
+            if (value == null)
+            {
+                return 0.0;
+            }
+            return ((double)value - min) / (max - min);
         }
 
         // Method to rescale back to original value (if needed)
