@@ -1,62 +1,57 @@
-﻿@model IEnumerable<Intex.Models.CleanProduct>
-
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
 @{
-    ViewData["Title"] = "Admin Dashboard - Clean Products";
 }
+@model Intex.Models.ViewModels.ProductListViewModel
 
-<h2>Admin Dashboard</h2>
 
 
-@if (!Model.Any())
-{
-    <p>No products found.</p>
-}
-else
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Product ID</th>
-                <th>Name</th>
-                <th>Year</th>
-                <th>Number of Parts</th>
-                <th>Price</th>
-                <th>Image Link</th>
-                <th>Actions</th> <!-- Column for actions like Edit/Delete -->
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var product in Model)
-            {
-                <tr>
-                    <td>@product.product_id</td>
-                    <td>@product.name</td>
-                    <td>@product.year</td>
-                    <td>@product.num_parts</td>
-                    <td>
-                        @if (product.price.HasValue)
-                        {
-                            @String.Format("{0:C}", product.price)
-                        }
-                    </td>
-                    <td>
-                        @if (!string.IsNullOrWhiteSpace(product.img_link))
-                        {
-                            <img src="@product.img_link" alt="Product Image" style="width:100px; height:auto;" />
-                        }
-                    </td>
-                    <td>
-                        <!-- Edit Button -->
-                        <a href="@Url.Action("EditProduct", "Home", new { id = product.product_id })" class="btn btn-primary">Edit</a>
+<div class="row">
+        <a href="/ProductDisplay">
+            <button style="background-color: #f0f0f0; color: #000; font-size: 16px; padding: 10px 20px; border: none; cursor: pointer; border-radius: 5px; font-weight: bold; font-family: Arial, sans-serif;">
+                &lt; Products
+            </button>
+        </a>
+=
+<br/>
 
-                      
-                        <a href="@Url.Action("DeleteProduct", "Home", new { id = product.product_id })" class="btn btn-danger">Delete</a>
+    <div style="background-color: #f0f0f0; border-radius: 10px; padding: 20px; color: #333; width: 900px; text-align: center; margin: 50px auto; box-sizing: border-box;">
+        <div style="margin-bottom: 20px; text-align: left;">
+            <h2 style="margin: 0; font-size: 32px;">Welcome Admin</h2>
+        </div>
 
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+        <div style="display: flex; align-items: flex-start; justify-content: space-between;">
+            <div style="flex: 1; text-align: center;">
+                <!-- The image you want to display goes here -->
+                <img src="~/lib/Aurora.png" alt="Profile Image" style="max-width: 250px; width: 50%; height: auto; border-radius: 10px;">
+            </div>
+            <div style="flex: 1;">
+                <!-- List of buttons -->
+                <div style="text-align: right; margin-bottom: 10px;">
+                    <a href="ProductDashboard.html" style="text-decoration: none;">
+                        <button style="padding: 10px 20px; border: none; border-radius: 5px; background-color: #2A2A31; color: white; cursor: pointer; width: 100%;">Products</button>
+                    </a>
+                </div>
+                <div style="text-align: right; margin-bottom: 10px;">
+                    <a href="UserAdmin.html" style="text-decoration: none;">
+                        <button style="padding: 10px 20px; border: none; border-radius: 5px; background-color: #2A2A31; color: white; cursor: pointer; width: 100%;">Users</button>
+                    </a>
+                </div>
+                <div style="text-align: right; margin-bottom: 10px;">
+                    <a href="OrderDashboard.html" style="text-decoration: none;">
+                        <button style="padding: 10px 20px; border: none; border-radius: 5px; background-color: #2A2A31; color: white; cursor: pointer; width: 100%;">Orders</button>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 
-}
-<a class="btn btn-outline-secondary" asp-controller="Home" asp-action="CreateProduct">Create Product</a>
+
+
+
+
+
+
+
+
