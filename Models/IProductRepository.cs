@@ -2,6 +2,7 @@
 {
     public interface IProductRepository
     {
+
         IQueryable<Product> Products { get; }
         IQueryable<CleanProduct> CleanProducts { get; }
         IQueryable<CategoryClean> Categories { get; }
@@ -10,6 +11,7 @@
         IQueryable<ItemReccomendation> ItemReccomendations { get; }
         IQueryable<User6Product> User6Products { get; }
         IQueryable<Order> Orders { get; }
+
 
         void UpdateCleanProduct(CleanProduct product);
         void DeleteCleanProduct(CleanProduct product);

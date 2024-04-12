@@ -10,25 +10,32 @@ using Microsoft.EntityFrameworkCore;
 using SQLitePCL;
 using System.Diagnostics;
 using System.Drawing.Printing;
+using Microsoft.AspNetCore.Identity;
 
 
 
 namespace Intex.Controllers
 {
+
     public class HomeController : Controller
     {
+        // Services are declared here
+        private readonly UserManager<IdentityUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
+     
+
        // private readonly ILogger<HomeController> _logger;
 
         private IProductRepository _repo;
         private const string Key = "Cart";
 
-       /* public HomeController(ILogger<HomeController> logger)
+
+        // Constructor uses dependency injection to populate the services
+        public HomeController(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, IProductRepository repo)
         {
-            _logger = logger;
-        }*/
-       public HomeController(IProductRepository temp)
-        {
-            _repo = temp;
+            _userManager = userManager;
+            _roleManager = roleManager;
+            _repo = repo;
         }
 
         public IActionResult Index()
@@ -317,8 +324,19 @@ namespace Intex.Controllers
             return View(cleanProductsList);
         }
 
+        [Authorize(Roles = "Admin")]
+        public IActionResult OrderDashboard()
+        {
+            // Retrieve all CleanProducts using LINQ, ordered by product_id in ascending order.
+            var Orders = _repo.Orders .OrderBy(p => p.Date).ToList();
 
-        public IActionResult ProductDisplay(int pageNum,  int pageSize, string? productType)
+            // Pass the sorted list of products to the view Keep this one
+            return View(Orders);
+        }
+
+
+
+        public IActionResult ProductDisplay(int pageNum,  int pageSize, string? productType, string? productColour)
         {
             //pageSize = 10;
 
@@ -335,6 +353,11 @@ namespace Intex.Controllers
                       (combined, category) => new { combined.product, CategoryName = category.name });
 
             // Apply filtering before grouping
+            if (!string.IsNullOrWhiteSpace(productColour))
+            {
+                query = query.Where(p => p.product.primary_color == productColour || p.product.secondary_color == productColour);
+            }
+
             if (!string.IsNullOrWhiteSpace(productType))
             {
                 query = query.Where(combined => combined.CategoryName == productType);
@@ -377,14 +400,49 @@ namespace Intex.Controllers
 
             return View(setup);
         }
-        [HttpGet]
-        [Authorize(Roles = "Admin")]
-        public IActionResult EditProduct(int id)
-        {
-            var product = _repo.CleanProducts.FirstOrDefault(p => p.product_id == id);
-            if (product == null) return NotFound();
-            return View(product);
-        }
+
+
+
+
+        //[Authorize(Roles = "Admin")]
+        //public async Task<IActionResult> ListUsers()
+        //{
+        //    var users = _userManager.Users.ToList();
+        //    var userRolesViewModel = new List<UserRolesViewModel>();
+
+        //    foreach (var user in users)
+        //    {
+        //        var thisViewModel = new UserRolesViewModel
+        //        {
+        //            UserId = user.Id,
+        //            UserName = user.UserName,
+        //            Email = user.Email,
+        //            Roles = await _userManager.GetRolesAsync(user)
+        //        };
+        //        userRolesViewModel.Add(thisViewModel);
+        //    }
+
+        //    return View(userRolesViewModel);
+        //}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         [HttpPost]
         [Authorize(Roles = "Admin")]

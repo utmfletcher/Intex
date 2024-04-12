@@ -30,6 +30,7 @@ namespace Intex.Models
 
         public IQueryable<Order> Orders => _context.Orders;
 
+
         public void UpdateCleanProduct(CleanProduct product)
         {
             _context.Entry(product).State = EntityState.Modified;

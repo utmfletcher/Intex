@@ -1,0 +1,60 @@
+﻿@model IEnumerable<Intex.Models.Order>
+
+@{
+    ViewData["Title"] = "Order Dashboard";
+}
+
+<h2>Order Dashboard</h2>
+
+
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Transaction ID</th>
+            <th>Customer ID</th>
+            <th>Date</th>
+            <th>Day Of Week</th>
+            <th>Time</th>
+            <th>Entry Mode</th>
+            <th>Ammount</th>
+            <th>Type of Transactions</th>
+            <th>Transaction Country</th>
+            <th>Shipping Address</th>
+            <th>Bank</th>
+            <th>Type of Card</th>
+            <th>Fraud</th>
+            <th>Actions</th> <!-- Column for actions like Edit/Delete -->
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var order in Model.Take(20))
+        {
+            <tr>
+                <td>@order.TransactionId</td>
+                <td>@order.CustomerId</td>
+                <td>@order.Date</td>
+                <td>@order.DayOfWeek</td>
+                <td>@order.Time</td>
+                <td>@order.EntryMode</td>
+                <td>@order.Amount</td>
+                <td>@order.TypeOfTransaction</td>
+                <td>@order.CountryOfTransaction</td>
+                <td>@order.ShippingAddress</td>
+                <td>@order.Bank</td>
+                <td>@order.TypeOfCard</td>
+                <td>@order.Fraud</td>
+                <td>
+                    <!-- Edit Button -->
+                    <a href="@Url.Action("EditProduct", "Home", new { id = order.TransactionId })" class="btn btn-primary">Edit</a>
+
+                      
+                    <a href="@Url.Action("DeleteProduct", "Home", new { id = order.TransactionId })" class="btn btn-danger">Delete</a>
+
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+

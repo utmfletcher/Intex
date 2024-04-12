@@ -4,6 +4,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Intex.Models;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.CodeAnalysis.Scripting;
+using System;
+using System.Security.Policy;
 
 namespace Intex
 {
@@ -19,7 +22,7 @@ namespace Intex
                 options.UseNpgsql(connectionString));
 
             builder.Services.AddDbContext<PostgresContext>(options =>
-    options.UseNpgsql(connectionString));
+            options.UseNpgsql(connectionString));
 
             builder.Services.AddScoped<IProductRepository, EFProductRepository>();
 
@@ -36,6 +39,9 @@ namespace Intex
                 googleOptions.ClientId = builder.Configuration["Authentication:Google:ClientId"];
                 googleOptions.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
             });
+
+
+
             builder.Services.AddRazorPages();
 
             builder.Services.AddHsts(options =>
@@ -43,12 +49,18 @@ namespace Intex
                 options.Preload = true;
                 options.IncludeSubDomains = true;
 
+
+                options.MaxAge = TimeSpan.FromDays(365); // Adjust the MaxAge as needed
             });
+
+
             builder.Services.AddDistributedMemoryCache();
             builder.Services.AddSession();
             builder.Services.AddScoped<Cart>(sp=>SessionCart.GetCart(sp));  
             builder.Services.AddSingleton
                 <IHttpContextAccessor, HttpContextAccessor>();
+
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -63,7 +75,8 @@ namespace Intex
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-         
+
+            app.UseHsts();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
@@ -95,7 +108,9 @@ namespace Intex
             //    "products/{productType}",
             //    new { controller = "Products", action = "ByType" }
             //);
-            
+            app.MapControllerRoute( "ProductDisplayWithColour", "ProductDisplay/{pageNum}/{pageSize}/{productType}/{productColour}", new { Controller = "Home", action = "ProductDisplay", pageNum = 1, pageSize = 5, productType = (string?)null, productColour = (string?)null }
+);
+
             app.MapControllerRoute("PageNumSizeType", "ProductDisplay/{pageNum}/{pageSize}/{productType}", new { Controller = "Home", action = "ProductDisplay", pageNum = 1, pageSize = 5 });
 
             app.MapControllerRoute("PageNumSize", "ProductDisplay/{pageNum}/{pageSize}", new { Controller = "Home", action = "ProductDisplay" });
@@ -114,6 +129,27 @@ namespace Intex
 
             app.MapDefaultControllerRoute();
             app.UseSession();
+
+            app.Use(async (ctx, next) =>
+            {
+                ctx.Response.Headers.Add("X-Content-Type-Options", "nosniff");
+                ctx.Response.Headers.Add("X-XSS-Protection", "1; mode=block");
+                ctx.Response.Headers.Add("Referrer-Policy", "no-referrer");
+                ctx.Response.Headers.Add("Content-Security-Policy",
+                    "default-src 'self'; " +
+                    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://app.termly.io; " + // Add https://app.termly.io here
+                    "style-src 'self' 'unsafe-inline'; " +
+                    "img-src 'self' https://images.brickset.com https://www.lego.com https://*.amazonaws.com https://*.googleusercontent.com https://m.media-amazon.com https://www.brickeconomy.com data:; " +
+                    "font-src 'self'; " +
+                    "frame-src 'self'; " +
+                    "object-src 'none'; " +
+                    "base-uri 'self'; " +
+                    "form-action 'self'; " +
+                    "connect-src 'self';");
+
+                await next();
+            });
+
 
 
             app.MapRazorPages();

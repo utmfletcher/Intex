@@ -14,3 +14,11 @@
         <a class="btn @(cat == ViewBag.SelectedProductType ? "btn-primary" : "btn-outline-secondary")" asp-controller="Home" asp-action="ProductDisplay" asp-route-productType="@cat" asp-route-pageNum="1">@cat</a>
     }
 </div>
+@* <div class="d-grid gap-2">
+    <a class="btn btn-outline-secondary" asp-controller="Home" asp-action="ProductDisplay" asp-route-productType="">Clear Filters</a>
+
+    @foreach (string cat in Model ?? Enumerable.Empty<string>())
+    {
+        <a class="btn @(cat == ViewBag.SelectedColour ? "btn-primary" : "btn-outline-secondary")" asp-controller="Home" asp-action="ProductDisplay" asp-route-productColour="@cat" asp-route-pageNum="1">@cat</a>
+    }
+</div> *@
