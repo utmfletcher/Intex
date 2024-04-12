@@ -321,7 +321,7 @@ namespace Intex.Controllers
 
 
         [Authorize(Roles = "Admin")]
-        public IActionResult AdminDashboard()
+        public IActionResult ProductDashboard()
         {
             // Retrieve all CleanProducts using LINQ, ordered by product_id in ascending order.
             var cleanProductsList = _repo.CleanProducts.OrderBy(p => p.product_id).ToList();
@@ -530,17 +530,10 @@ namespace Intex.Controllers
         }
 
 
-
-
-
-
-
-
-
-
-
-
-
+        public IActionResult AdminDashboard()
+        {
+            return View();
+        }
 
 
         [HttpGet]
@@ -560,10 +553,12 @@ namespace Intex.Controllers
             {
                 _repo.UpdateCleanProduct(product);
                 _repo.SaveChanges();
-                return RedirectToAction(nameof(AdminDashboard));
+
+                return RedirectToAction(nameof(ProductDashboard));
             }
             return View(product);
         }
+
         //[Authorize(Roles = "Admin")]
         //public async Task<IActionResult> ListUsers()
         //{
@@ -605,7 +600,7 @@ namespace Intex.Controllers
                 _repo.SaveChanges();
             }
 
-            return RedirectToAction(nameof(AdminDashboard));
+            return RedirectToAction(nameof(ProductDashboard));
         }
 
 
@@ -629,7 +624,7 @@ namespace Intex.Controllers
             _repo.SaveChanges();
 
             // Redirect to the "OrderConfirmation" action if product creation is successful
-            return RedirectToAction("AdminDashboard");
+            return RedirectToAction("ProductDashboard");
 
 
 
