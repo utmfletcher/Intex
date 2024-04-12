@@ -1,49 +1,33 @@
-﻿@model Intex.Models.CleanProduct
+﻿@model Intex.Models.ViewModels.CleanProductViewModel
 
 <h2>Add New Product</h2>
 
-<form asp-action="CreateProduct" method="post" enctype="multipart/form-data">
-    
+<form asp-action="CreateProduct" method="post">
+    <label for="Name">Name:</label>
+    <input type="text" id="Name" name="Name" required><br>
 
-    <div class="form-group">
-        <label asp-for="name"></label>
-        <input asp-for="name" class="form-control" />
-    </div>
+    <label for="Year">Year:</label>
+    <input type="number" id="Year" name="Year"><br>
 
-    <div class="form-group">
-        <label asp-for="year"></label>
-        <input asp-for="year" class="form-control" />
-    </div>
+    <label for="NumParts">Number of Parts:</label>
+    <input type="number" id="NumParts" name="NumParts"><br>
 
-    <div class="form-group">
-        <label asp-for="num_parts"></label>
-        <input asp-for="num_parts" class="form-control" />
-    </div>
+    <label for="Price">Price:</label>
+    <input type="number" id="Price" name="Price"><br>
 
-    <div class="form-group">
-        <label asp-for="price"></label>
-        <input asp-for="price" class="form-control" />
-    </div>
+    <label for="ImgLink">Image Link:</label>
+    <input type="text" id="ImgLink" name="ImgLink"><br>
 
-    <div class="form-group">
-        <label asp-for="img_link"></label>
-        <input asp-for="img_link" class="form-control" />
-    </div>
+    <label for="PrimaryColor">Primary Color:</label>
+    <input type="text" id="PrimaryColor" name="PrimaryColor"><br>
 
-    <div class="form-group">
-        <label asp-for="primary_color"></label>
-        <input asp-for="primary_color" class="form-control" />
-    </div>
+    <label for="SecondaryColor">Secondary Color:</label>
+    <input type="text" id="SecondaryColor" name="SecondaryColor"><br>
 
-    <div class="form-group">
-        <label asp-for="secondary_color"></label>
-        <input asp-for="secondary_color" class="form-control" />
-    </div>
+    <label for="Description">Description:</label><br>
+    <textarea id="Description" name="Description" rows="4" cols="50"></textarea><br>
 
-    <div class="form-group">
-        <label asp-for="description"></label>
-        <textarea asp-for="description" rows="5" class="form-control"></textarea>
-    </div>
+  
 
-    <button type="submit" class="btn btn-success">Add Product</button>
+    <button type="submit">Submit</button>
 </form>

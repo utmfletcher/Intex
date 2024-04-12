@@ -48,6 +48,8 @@ namespace Intex
             {
                 options.Preload = true;
                 options.IncludeSubDomains = true;
+
+
                 options.MaxAge = TimeSpan.FromDays(365); // Adjust the MaxAge as needed
             });
 
