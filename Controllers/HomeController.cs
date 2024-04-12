@@ -553,6 +553,7 @@ namespace Intex.Controllers
             {
                 _repo.UpdateCleanProduct(product);
                 _repo.SaveChanges();
+
                 return RedirectToAction(nameof(ProductDashboard));
             }
             return View(product);
