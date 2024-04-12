@@ -130,6 +130,7 @@ namespace Intex.Controllers
             }
             return cart;
         }
+        [Authorize]
         public IActionResult Checkout()
         {
             var cart = GetCurrentCart();
