@@ -551,6 +551,19 @@ namespace Intex.Controllers
             if (product == null) return NotFound();
             return View(product);
         }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public IActionResult EditProduct(CleanProduct product)
+        {
+            if (ModelState.IsValid)
+            {
+                _repo.UpdateCleanProduct(product);
+                _repo.SaveChanges();
+                return RedirectToAction(nameof(AdminDashboard));
+            }
+            return View(product);
+        }
         //[Authorize(Roles = "Admin")]
         //public async Task<IActionResult> ListUsers()
         //{
