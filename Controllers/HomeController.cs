@@ -325,7 +325,7 @@ namespace Intex.Controllers
         public IActionResult OrderDashboard()
         {
             // Retrieve all CleanProducts using LINQ, ordered by product_id in ascending order.
-            var Orders = _repo.Orders .OrderBy(p => p.Date).ToList();
+            var Orders = _repo.Orders .OrderByDescending(p => p.Date).ToList();
 
             // Pass the sorted list of products to the view Keep this one
             return View(Orders);
@@ -441,16 +441,12 @@ namespace Intex.Controllers
 
 
 
-        [HttpPost]
+        [HttpGet]
         [Authorize(Roles = "Admin")]
-        public IActionResult EditProduct(CleanProduct product)
+        public IActionResult EditProduct(int id)
         {
-            if (ModelState.IsValid)
-            {
-                _repo.UpdateCleanProduct(product);
-                _repo.SaveChanges();
-                return RedirectToAction(nameof(AdminDashboard));
-            }
+            var product = _repo.CleanProducts.FirstOrDefault(p => p.product_id == id);
+            if (product == null) return NotFound();
             return View(product);
         }
         //[Authorize(Roles = "Admin")]
