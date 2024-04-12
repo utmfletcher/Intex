@@ -1,0 +1,12 @@
+﻿@model IEnumerable<string>
+
+<div class="d-grid gap-2">
+    @foreach (var colour in Model)
+    {
+        <a class="btn @(ViewBag.SelectedColour == colour ? "btn-primary" : "btn-outline-secondary")"
+           asp-controller="Home"
+           asp-action="ProductDisplay"
+           asp-route-productColour="@colour"
+           asp-route-pageNum="1">@colour</a>
+    }
+</div>

@@ -9,6 +9,8 @@ namespace Intex.Pages
     {
         private IProductRepository _repo;
         public Cart Cart { get; set; }
+        public int OrderId { get; set; }
+        public Order Order { get; set; }
         public CartModel(IProductRepository temp,Cart cartService)
         {
             _repo= temp;    
@@ -44,6 +46,7 @@ namespace Intex.Pages
             Cart.RemoveLine(Cart.Lines.First(x => x.Product.ProductId == productId).Product);
             return RedirectToPage(new {returnUrl = returnUrl ?? "/"});
         }
+      
 
     }
 }

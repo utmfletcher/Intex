@@ -4,6 +4,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Intex.Models;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.CodeAnalysis.Scripting;
+using System;
+using System.Security.Policy;
 
 namespace Intex
 {
@@ -22,6 +25,7 @@ namespace Intex
     options.UseNpgsql(connectionString));
 
             builder.Services.AddScoped<IProductRepository, EFProductRepository>();
+
 
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -87,7 +91,9 @@ namespace Intex
             //    "products/{productType}",
             //    new { controller = "Products", action = "ByType" }
             //);
-            
+            app.MapControllerRoute( "ProductDisplayWithColour", "ProductDisplay/{pageNum}/{pageSize}/{productType}/{productColour}", new { Controller = "Home", action = "ProductDisplay", pageNum = 1, pageSize = 5, productType = (string?)null, productColour = (string?)null }
+);
+
             app.MapControllerRoute("PageNumSizeType", "ProductDisplay/{pageNum}/{pageSize}/{productType}", new { Controller = "Home", action = "ProductDisplay", pageNum = 1, pageSize = 5 });
 
             app.MapControllerRoute("PageNumSize", "ProductDisplay/{pageNum}/{pageSize}", new { Controller = "Home", action = "ProductDisplay" });
@@ -106,6 +112,27 @@ namespace Intex
 
             app.MapDefaultControllerRoute();
             app.UseSession();
+
+            app.Use(async (ctx, next) =>
+            {
+                ctx.Response.Headers.Add("X-Content-Type-Options", "nosniff");
+                ctx.Response.Headers.Add("X-XSS-Protection", "1; mode=block");
+                ctx.Response.Headers.Add("Referrer-Policy", "no-referrer");
+                ctx.Response.Headers.Add("Content-Security-Policy",
+                    "default-src 'self'; " +
+                    "script-src 'self' 'unsafe-inline' 'unsafe-eval'; " +
+                    "style-src 'self' 'unsafe-inline'; " +
+                    "img-src 'self' https://images.brickset.com https://www.lego.com  https://m.media-amazon.com https://www.brickeconomy.com data:; " +
+                    "font-src 'self'; " +
+                    "frame-src 'self'; " +
+                    "object-src 'none'; " +
+                    "base-uri 'self'; " +
+                    "form-action 'self'; " +
+                    "connect-src 'self';");
+
+
+                await next();
+            });
 
 
             app.MapRazorPages();
