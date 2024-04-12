@@ -22,7 +22,7 @@ namespace Intex
                 options.UseNpgsql(connectionString));
 
             builder.Services.AddDbContext<PostgresContext>(options =>
-    options.UseNpgsql(connectionString));
+            options.UseNpgsql(connectionString));
 
             builder.Services.AddScoped<IProductRepository, EFProductRepository>();
 
@@ -39,12 +39,26 @@ namespace Intex
                 googleOptions.ClientId = builder.Configuration["Authentication:Google:ClientId"];
                 googleOptions.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
             });
+
+
+
             builder.Services.AddRazorPages();
+
+            builder.Services.AddHsts(options =>
+            {
+                options.Preload = true;
+                options.IncludeSubDomains = true;
+                options.MaxAge = TimeSpan.FromDays(365); // Adjust the MaxAge as needed
+            });
+
+
             builder.Services.AddDistributedMemoryCache();
             builder.Services.AddSession();
             builder.Services.AddScoped<Cart>(sp=>SessionCart.GetCart(sp));  
             builder.Services.AddSingleton
                 <IHttpContextAccessor, HttpContextAccessor>();
+
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -59,7 +73,8 @@ namespace Intex
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-         
+
+            app.UseHsts();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 

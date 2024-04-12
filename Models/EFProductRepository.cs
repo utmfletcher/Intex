@@ -30,7 +30,7 @@ namespace Intex.Models
 
         public IQueryable<Order> Orders => _context.Orders;
 
-        object IProductRepository.Orders => throw new NotImplementedException();
+        //object IProductRepository.Orders => throw new NotImplementedException();
 
         public void UpdateCleanProduct(CleanProduct product)
         {

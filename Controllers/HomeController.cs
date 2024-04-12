@@ -321,6 +321,17 @@ namespace Intex.Controllers
             return View(cleanProductsList);
         }
 
+        [Authorize(Roles = "Admin")]
+        public IActionResult OrderDashboard()
+        {
+            // Retrieve all CleanProducts using LINQ, ordered by product_id in ascending order.
+            var Orders = _repo.Orders .OrderBy(p => p.Date).ToList();
+
+            // Pass the sorted list of products to the view Keep this one
+            return View(Orders);
+        }
+
+
 
         public IActionResult ProductDisplay(int pageNum,  int pageSize, string? productType, string? productColour)
         {
