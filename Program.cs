@@ -37,6 +37,13 @@ namespace Intex
                 googleOptions.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
             });
             builder.Services.AddRazorPages();
+
+            builder.Services.AddHsts(options =>
+            {
+                options.Preload = true;
+                options.IncludeSubDomains = true;
+
+            });
             builder.Services.AddDistributedMemoryCache();
             builder.Services.AddSession();
             builder.Services.AddScoped<Cart>(sp=>SessionCart.GetCart(sp));  
