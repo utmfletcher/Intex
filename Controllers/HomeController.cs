@@ -412,7 +412,74 @@ namespace Intex.Controllers
         //}
 
 
+        public IActionResult ReviewOrders()
+        {
+            var products = _repo.Products;
+            var lineItems = _repo.Lineitems;
+            var orders = _repo.Orders;
+            var customers = _repo.Customers;
 
+            MinMaxScaler timeScaler = new MinMaxScaler(-2.83, 24);
+            MinMaxScaler amountScaler = new MinMaxScaler(5, 400);
+            MinMaxScaler totalValueScaler = new MinMaxScaler(1, 390);
+            MinMaxScaler ageScaler = new MinMaxScaler(16.8, 76.9);
+            MinMaxScaler dayOfMonth = new MinMaxScaler(0, 31);
+            MinMaxScaler monthOfYear = new MinMaxScaler(1, 12);
+            foreach (var order in orders)
+            {
+                var input = new List<float>
+                {
+                    (float)timeScaler.Scale((double)order.Time!),
+                    (float)amountScaler.Scale((double)order.Amount!),
+                    (float)totalValueScaler.Scale(CalculateTotalValue(order.TransactionId, lineItems, products)),
+                    (float)ageScaler.Scale((double)customers.Where(c => c.CustomerId == order.CustomerId).Select(c => c.Age).SingleOrDefault()!),
+                    (float)dayOfMonth.Scale(DateTime.Parse(order.Date!).Day),
+                    (float)monthOfYear.Scale(DateTime.Parse(order.Date!).Month),
+                    order.DayOfWeek == "Monday" ? (float)1.0 : (float)0.0,
+                    order.DayOfWeek == "Saturday" ? (float)1.0 : (float)0.0,
+                    order.DayOfWeek == "Sunday" ? (float)1.0 : (float)0.0,
+                    order.DayOfWeek == "Thursday" ? (float)1.0 : (float)0.0,
+                    order.DayOfWeek == "Tuesday" ? (float)1.0 : (float)0.0,
+                    order.DayOfWeek == "Wednesday" ? (float)1.0 : (float)0.0,
+                    order.EntryMode == "PIN" ? (float)1.0 : (float)0.0,
+                    order.EntryMode == "Tap" ? (float)1.0 : (float)0.0,
+                    order.TypeOfTransaction == "Online" ? (float)1.0 : (float)0.0,
+                    order.TypeOfTransaction == "POS" ? (float)1.0 : (float)0.0,
+                    order.CountryOfTransaction == "India" ? (float)1.0 : (float)0,0,
+                    order.CountryOfTransaction == "Russia" ? (float)1.0 : (float)0,0,
+                    order.CountryOfTransaction == "USA" ? (float)1.0 : (float)0,0,
+                    order.CountryOfTransaction == "United Kingdom" ? (float)1.0 : (float)0,0,
+                    order.ShippingAddress == "India" ? (float)1.0 : (float)0,0,
+                    order.ShippingAddress == "Russia" ? (float)1.0 : (float)0,0,
+                    order.ShippingAddress == "USA" ? (float)1.0 : (float)0,0,
+                    order.ShippingAddress == "United Kingdom" ? (float)1.0 : (float)0,0,
+                    order.Bank == "HSBC" ? (float)1.0 : (float)0,0,
+                    order.Bank == "Halifax" ? (float)1.0 : (float)0,0,
+                    order.Bank == "Lloyds" ? (float)1.0 : (float)0,0,
+                    order.Bank == "Metro" ? (float)1.0 : (float)0,0,
+                    order.Bank == "Monzo" ? (float)1.0 : (float)0,0,
+                    order.Bank == "RBS" ? (float)1.0 : (float)0,0,
+                    order.TypeOfCard == "Visa" ? (float)1.0 : (float)0,0,
+                    customers.Where(c => c.CustomerId == order.CustomerId).Select(c => c.CountryOfResidence).SingleOrDefault()! == "Russia" ? (float)1.0 : (float)0,0,
+                    customers.Where(c => c.CustomerId == order.CustomerId).Select(c => c.CountryOfResidence).SingleOrDefault()! == "United Kingdom" ? (float)1.0 : (float)0,0,
+                    customers.Where(c => c.CustomerId == order.CustomerId).Select(c => c.Gender).SingleOrDefault()! == "M" ? (float)1.0 : (float)0,0
+                };
+            }
+                
+        }
+
+        public static long CalculateTotalValue(int transactionId, IQueryable<Lineitem> lineItems, IQueryable<Product> products)
+        {
+            long totalValue = (long)lineItems
+                .Where(l => l.TransactionId == transactionId)
+                .Join(products,
+                      lineItem => lineItem.ProductId,
+                      product => product.ProductId,
+                      (lineItem, product) => new { lineItem.Qty, product.Price })
+                .Sum(x => x.Price * x.Qty)!;
+
+            return totalValue;
+        }
 
 
 
@@ -516,4 +583,6 @@ namespace Intex.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
+
+
 }

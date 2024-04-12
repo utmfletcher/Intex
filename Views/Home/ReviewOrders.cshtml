@@ -1,0 +1,170 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+@model Intex.Models.ViewModels.ProductListViewModel
+
+<h1>Review Orders</h1>
+
+
+ <div class="row m-1 p-1">
+    <div class="col-2">
+        <vc:product-types />
+        <vc:product-colour />
+    </div>
+
+    <div class="container col-10">
+        <div class="container mt-3">
+
+            @* Products *@
+            <div class="row">
+                @foreach (CleanProductViewModel p in Model.CleanProducts)
+                {
+                    <div class="col-6 mb-4">
+                        <partial name="ProductSummary" model="p" />
+                    </div>
+                }
+            </div>
+
+            @* Pagination boxes *@
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    <!-- Previous Page Button -->
+                    <li class="page-item @(Model.PaginationInfo.CurrentPage == 1 ? "disabled" : "")">
+                        <a class="page-link" href="#" aria-label="Previous"
+                           onclick="goToPage(@(Model.PaginationInfo.CurrentPage - 1))">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+
+                    <!-- Pagination Buttons -->
+                    @for (int i = 1; i <= Model.PaginationInfo.TotalPages; i++)
+                    {
+                        <li class="page-item @(i == Model.PaginationInfo.CurrentPage ? "active" : "")">
+                            <a class="page-link" href="#" onclick="goToPage(@i)">@i</a>
+                        </li>
+                    }
+
+                    <!-- Next Page Button -->
+                    <li class="page-item @(Model.PaginationInfo.CurrentPage == Model.PaginationInfo.TotalPages ? "disabled" : "")">
+                        <a class="page-link" href="#" aria-label="Next"
+                           onclick="goToPage(@(Model.PaginationInfo.CurrentPage + 1))">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            @* Per Page Drop Down *@
+            <div class="d-flex justify-content-center">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-primary dropdown-toggle" onclick="togglePageSizeOptions()">
+                        Per page
+                    </button>
+                    <div id="pageSizeOptions" class="dropdown-menu" style="display: none;">
+                        <button class="dropdown-item" onclick="setPageSize(5)" class="@(Model.PaginationInfo.ItemsPerPage == 5 ? "active" : "")">5</button>
+                        <button class="dropdown-item" onclick="setPageSize(10)" class="@(Model.PaginationInfo.ItemsPerPage == 10 ? "active" : "")">10</button>
+                        <button class="dropdown-item" onclick="setPageSize(15)" class="@(Model.PaginationInfo.ItemsPerPage == 15 ? "active" : "")">15</button>
+                        <button class="dropdown-item" onclick="setPageSize(20)" class="@(Model.PaginationInfo.ItemsPerPage == 20 ? "active" : "")">20</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function togglePageSizeOptions() {
+            var options = document.getElementById('pageSizeOptions');
+            options.style.display = options.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function goToPage(pageNumber) {
+            var currentProductType = '@Model.CurrentProductType';
+            var baseUrl = '@Url.Content("~/")';
+            var url = '';
+
+            if (currentProductType) {
+                url = `${baseUrl}ProductDisplay/${currentProductType}/${pageNumber}`;
+            } else {
+                url = `${baseUrl}ProductDisplay/${pageNumber}`;
+            }
+
+            window.location.href = url;
+        }
+
+        function setPageSize(pageSize) {
+            
+            var baseUrl = '@Url.Content("~/")';
+            var pageNumber = 1; // Always reset to the first page when changing the page size
+
+            // Construct the URL with the new page size, assuming pageNumber is always reset to 1
+            var url = `${baseUrl}ProductDisplay/${pageNumber}/${pageSize}`;
+
+            window.location.href = url;
+        }
+
+        // Close the dropdown if the user clicks outside of it
+        window.onclick = function (event) {
+            if (!event.target.matches('.per-page-toggle')) {
+                var dropdowns = document.getElementsByClassName("page-size-options");
+                var i;
+                for (i = 0; i < dropdowns.length; i++) {
+                    var openDropdown = dropdowns[i];
+                    if (openDropdown.style.display === 'block') {
+                        openDropdown.style.display = 'none';
+                    }
+                }
+            }
+        }
+
+    </script>
+@*     <style>
+        .pagination-per-page-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .per-page-toggle {
+            /* Styles for the "Per page" button */
+        }
+
+        .page-size-options {
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+        }
+
+            .page-size-options button {
+                color: black;
+                padding: 12px 16px;
+                text-decoration: none;
+                display: block;
+            }
+
+                .page-size-options button:hover {
+                    background-color: #f1f1f1;
+                }
+
+        .selected {
+            font-weight: bold;
+            /* Additional styles for selected page size */
+        }
+
+        .caret {
+            border-width: 5px;
+            border-style: solid;
+            border-color: transparent transparent black transparent;
+            display: inline-block;
+            margin-left: 5px;
+        }
+    </style> *@
+}
+
+
