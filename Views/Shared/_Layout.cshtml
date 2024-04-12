@@ -8,7 +8,23 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Intex.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/lib/font-awesome/css/all.min.css" />
+    <!-- Consent check script -->
+
 </head>
+@if (!Context.Request.Cookies.ContainsKey("CookieConsent"))
+{
+    <div id="cookieConsentBanner" class="alert alert-info text-center" role="alert">
+        We use essential cookies to make our site work. With your consent, we may also use non-essential cookies to improve user experience and analyze website traffic. By clicking “I Understand,” you agree to our website's cookie use as described in our Cookie Policy.
+        <button onclick="hideCookieBanner()" class="btn btn-primary btn-sm">I understand</button>
+    </div>
+
+    <script>
+        function hideCookieBanner() {
+            document.getElementById('cookieConsentBanner').style.display = 'none';
+            document.cookie = "CookieConsent=true; path=/";
+        }
+    </script>
+}
 <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
@@ -57,7 +73,7 @@
 
             
         </nav>
-       
+
     </header>
 
     

@@ -120,9 +120,9 @@ namespace Intex
                 ctx.Response.Headers.Add("Referrer-Policy", "no-referrer");
                 ctx.Response.Headers.Add("Content-Security-Policy",
                     "default-src 'self'; " +
-                    "script-src 'self' 'unsafe-inline' 'unsafe-eval'; " +
+                    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://app.termly.io; " + // Add https://app.termly.io here
                     "style-src 'self' 'unsafe-inline'; " +
-                    "img-src 'self' https://images.brickset.com https://www.lego.com  https://m.media-amazon.com https://www.brickeconomy.com data:; " +
+                    "img-src 'self' https://images.brickset.com https://www.lego.com https://*.amazonaws.com https://*.googleusercontent.com https://m.media-amazon.com https://www.brickeconomy.com data:; " +
                     "font-src 'self'; " +
                     "frame-src 'self'; " +
                     "object-src 'none'; " +
@@ -130,9 +130,9 @@ namespace Intex
                     "form-action 'self'; " +
                     "connect-src 'self';");
 
-
                 await next();
             });
+
 
 
             app.MapRazorPages();
