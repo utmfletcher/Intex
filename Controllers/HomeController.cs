@@ -15,6 +15,7 @@ using Microsoft.ML.OnnxRuntime;
 using Microsoft.ML.OnnxRuntime.Tensors;
 
 
+
 namespace Intex.Controllers
 {
 
@@ -139,7 +140,7 @@ namespace Intex.Controllers
             }
             return View(cart);
         }
-
+       
         /*   public async Task<IActionResult> Checkout()
            {
                if(!User.Identity.IsAuthenticated)
@@ -149,8 +150,10 @@ namespace Intex.Controllers
                }
            }*/
         [HttpPost]
+        [Authorize]
         public IActionResult PlaceOrder(string street, string city, string state, string country, string bank, string typeOfCard)
         {
+
             var cart = GetCurrentCart();
             var order = new Order
             {
@@ -327,12 +330,13 @@ namespace Intex.Controllers
             return View(cleanProductsList);
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
+
         //public IActionResult OrderDashboard()
         //{
         //    // Retrieve all CleanProducts using LINQ, ordered by product_id in ascending order.
         //    var Orders = _repo.Orders .OrderBy(p => p.Date).ToList();
-
+        
         //    // Pass the sorted list of products to the view Keep this one
         //    return View(Orders);
         //}
@@ -539,16 +543,12 @@ namespace Intex.Controllers
 
 
 
-        [HttpPost]
+        [HttpGet]
         [Authorize(Roles = "Admin")]
-        public IActionResult EditProduct(CleanProduct product)
+        public IActionResult EditProduct(int id)
         {
-            if (ModelState.IsValid)
-            {
-                _repo.UpdateCleanProduct(product);
-                _repo.SaveChanges();
-                return RedirectToAction(nameof(AdminDashboard));
-            }
+            var product = _repo.CleanProducts.FirstOrDefault(p => p.product_id == id);
+            if (product == null) return NotFound();
             return View(product);
         }
         //[Authorize(Roles = "Admin")]
@@ -594,30 +594,43 @@ namespace Intex.Controllers
 
             return RedirectToAction(nameof(AdminDashboard));
         }
-        // Display the form for adding a new product
+
+
         [HttpGet]
         [Authorize(Roles = "Admin")]
         public IActionResult CreateProduct()
         {
-            return View("CreateProduct", new CleanProduct()); // Pass a new product to the view
+            var viewModel = new CleanProductViewModel();
+            return View(viewModel); // Ensure you're passing CleanProductViewModel instance to the view
         }
 
-        // Process the form submission for a new product
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public IActionResult CreateProduct(CleanProduct product)
+        public IActionResult CreateProduct(CleanProduct response)
         {
-            if (ModelState.IsValid)
-            {
-                _repo.AddCleanProduct(product); // Add the product to the database
-                _repo.SaveChanges(); // Save the changes
-                return RedirectToAction(nameof(AdminDashboard)); // Redirect to the dashboard
-            }
+            // Check if the model state is valid (i.e., if there are no validation errors)
 
-            return View(product); // If invalid, show the form again with validation messages
+            // Add the product to the repository
+            _repo.AddCleanProduct(response);
+
+            _repo.SaveChanges();
+
+            // Redirect to the "OrderConfirmation" action if product creation is successful
+            return RedirectToAction("AdminDashboard");
+
+
+
         }
 
 
+
+        /*[HttpGet]
+        [Authorize(Roles = "Admin")]
+        public IActionResult AdminDashboard()
+        {
+            // Implement admin dashboard logic here
+            return View();
+        }*/
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
