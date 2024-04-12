@@ -12,6 +12,11 @@
         IQueryable<User6Product> User6Products { get; }
         IQueryable<Order> Orders { get; }
 
+        public IQueryable<Lineitem> Lineitems { get; }
+
+        public IQueryable<Customer> Customers { get; }
+
+        //object Orders { get; }
 
         void UpdateCleanProduct(CleanProduct product);
         void DeleteCleanProduct(CleanProduct product);
