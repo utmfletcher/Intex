@@ -229,7 +229,6 @@ namespace Intex.Controllers
                 customers.Where(c => c.CustomerId == order.CustomerId).Select(c => c.CountryOfResidence).SingleOrDefault()! == "Russia" ? (float)1.0 : (float)0.0,
                 customers.Where(c => c.CustomerId == order.CustomerId).Select(c => c.CountryOfResidence).SingleOrDefault()! == "United Kingdom" ? (float)1.0 : (float)0.0,
                 customers.Where(c => c.CustomerId == order.CustomerId).Select(c => c.Gender).SingleOrDefault()! == "M" ? (float)1.0 : (float)0.0,
-                (float)1
             };
             var inputTensor = new DenseTensor<float>(input.ToArray(), new[] { 1, input.Count });
 
@@ -595,7 +594,6 @@ namespace Intex.Controllers
                     customers.Where(c => c.CustomerId == order.CustomerId).Select(c => c.CountryOfResidence).SingleOrDefault()! == "Russia" ? (float)1.0 : (float)0.0,
                     customers.Where(c => c.CustomerId == order.CustomerId).Select(c => c.CountryOfResidence).SingleOrDefault()! == "United Kingdom" ? (float)1.0 : (float)0.0,
                     customers.Where(c => c.CustomerId == order.CustomerId).Select(c => c.Gender).SingleOrDefault()! == "M" ? (float)1.0 : (float)0.0,
-                    (float)1
                 };
                 var inputTensor = new DenseTensor<float>(input.ToArray(), new[] { 1, input.Count });
 
